@@ -10,6 +10,10 @@ public with sharing class AccountController
         acclist =  [select Name, BillingCity, BillingAddress, BillingState, ownerID,phone,private__C from Account];   
         
     }
+	
+	public void m1(){
+	
+	}
 
    
 }
