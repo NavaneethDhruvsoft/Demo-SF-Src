@@ -1,0 +1,42 @@
+<apex:page controller="mycntrl" sidebar="false">
+<apex:form >
+  <apex:commandButton value="redirect" action="{!redirect}"/>
+   <apex:commandButton value="Accesstoken" action="{!RefreshAndAccessToken}"/><br/>
+   <apex:commandButton value="GETAllPositions" action="{!CallWebservice}"/><br/>
+   <apex:pageBlock > 
+    <apex:pageBlockTable value="{!posname}" var="pos">
+        <apex:column headerValue="name">
+            <apex:outputText >{!pos}</apex:outputText>
+        </apex:column>
+        
+    </apex:pageBlockTable>
+   </apex:pageBlock>
+   
+   <apex:inputtext value="{!posid}" html-placeholder="Position id"/>
+   <apex:commandButton value="GETPositionDetail" action="{!GETPositionDetail}"/><br/>
+   
+   <apex:inputtext value="{!posid1 }" html-placeholder="Position id"/>
+   <apex:inputtext value="{!name }" html-placeholder="candidate name "/>
+   <apex:inputtext value="{!email }" html-placeholder="candidate email"/>
+   <apex:inputtext value="{!cl }" html-placeholder="cover letter"/>
+    <apex:commandButton value="POSTApplication" action="{!POSTApplication}"/><br/>
+</apex:form>
+
+
+
+{!Response}<br/>
+    <br/>
+    Access token is :: {!AToken}
+    
+    <br/>
+    <br/>
+    WebServiceResponse is :: {!WebServiceResponse }<br/><br/>
+    
+    respbody ::: {!resbody }<br/><br/>
+    
+    Position Name ::: {!posname}<br/><br/>
+    Position ID :::: {!posid2}<br/><br/>
+   
+    
+  
+</apex:page>

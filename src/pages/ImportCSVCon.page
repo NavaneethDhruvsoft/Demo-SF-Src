@@ -1,0 +1,20 @@
+<apex:page controller="importDataFromCSVControllerCon">
+    <apex:form >
+        <apex:pagemessages />
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="4"> 
+                  <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+                  <apex:commandButton value="Import Account" action="{!importCSVFile}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock >
+           <apex:pageblocktable value="{!conlist}" var="acc">
+              <apex:column value="{!acc.FirstName}" />
+            <apex:column value="{!acc.LastName}" />
+            
+            <apex:column value="{!acc.Email }" />
+            <apex:column value="{!acc.Accountid}" />
+        </apex:pageblocktable>
+     </apex:pageBlock>
+   </apex:form>
+</apex:page>

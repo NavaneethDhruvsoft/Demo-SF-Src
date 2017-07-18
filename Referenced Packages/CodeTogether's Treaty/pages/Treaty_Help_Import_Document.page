@@ -1,0 +1,39 @@
+<apex:page tabstyle="codetogether__Treaty_Document__c" title="Treaty Document Importing Help">
+    <apex:sectionHeader title="Treaty Document" subtitle="Document Importing Help"></apex:sectionHeader>
+    <apex:pageBlock >
+        <p>
+            Import a document by clicking the Import button next to the filename in the document list.
+            The page will refresh several times during the import process.  When the import
+            is complete, your browser will automatically be redirected to the details page
+            for the newly imported Treaty Document.
+        </p>
+        <p>
+            Treaty documents can be imported from the Salesforce Document library, the Chatter Files library, or Dropbox (if you have a dropbox account).
+        </p>
+        <p>
+            Treaty allows users to import files of type:
+        </p>
+        <ul>
+            <li>.rtf (rich text format)</li>
+            <li>.txt (plain text document</li>
+            <li>.doc (Microsoft Word document)</li>
+            <li>.docx (Microsoft Word document)</li>
+            <li>.pptx (Microsoft Powerpoint document)</li>
+            <li>.pdf (Adobe Acrobat)*</li>
+        </ul>
+
+        <p>
+            Images embedded in a document will be imported into Treaty Images.
+        </p>
+        <p>
+            Embedded images have a <b>max filesize of 2MB</b>.  
+            If the converter encounters an image that is too large to import, a 
+            placeholder image will be uploaded in its place.  This placeholder
+            can be easily changed in the Treaty Editor.  
+        </p>
+        <p>
+            *Support for PDF files is limited and experimental.  Images and formatting
+            may be lost in the conversion process.
+        </p>
+    </apex:pageBlock>
+</apex:page>

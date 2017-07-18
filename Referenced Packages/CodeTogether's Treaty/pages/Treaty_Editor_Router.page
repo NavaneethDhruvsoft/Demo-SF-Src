@@ -1,0 +1,7 @@
+<apex:page title="{!codetogether__Treaty_Document__c.name} - Treaty Editor" tabstyle="codetogether__Treaty_Document__c" sidebar="false" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Editor_Router_Extension" action="{!route}" >
+<a href="{!URL}">Click Here</a> if you are not automatically redirected.
+<apex:form >
+<apex:inputField id="workaround" value="{!codetogether__Treaty_Document__c.codetogether__Treaty_Type__c}" required="false" rendered="false"/> 
+</apex:form>
+    
+</apex:page>

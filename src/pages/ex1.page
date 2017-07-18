@@ -1,0 +1,15 @@
+<apex:page standardController="Hostel__c" sidebar="false">    
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection >
+                <apex:inputField id="name" label="hostel name" value="{!Hostel__c.Hostel_Name__c}"/>
+                <apex:outputField id="name1" label="hostel name2" value="{!Hostel__c.Hostel_Name__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="top">
+                    <apex:commandButton action="{!save}" value="save" id="thebutton"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+        
+    
+</apex:page>

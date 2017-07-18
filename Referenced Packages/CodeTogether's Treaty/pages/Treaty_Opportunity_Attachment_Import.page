@@ -1,0 +1,79 @@
+<apex:page standardController="Opportunity" extensions="codetogether.Treaty_Attachment_Import" title="Import Attachment into Treaty">
+     <apex:sectionHeader subtitle="{!Opportunity.name}" title="Import Attachment into Treaty"></apex:sectionHeader>
+            <apex:outputText id="output"></apex:outputText>
+            <style type="text/css">
+                .tableClass
+                {
+                width: 100%;
+                }
+                .odd
+                {
+                background: lightgray;
+                }
+                #message
+                {
+                display: none;
+                }
+            </style>
+            <div id="list">
+                <apex:form >
+                    
+                    <apex:pageBlock title="Attachments">
+                        <apex:pageBlockButtons >
+                            <apex:commandButton immediate="true" action="/{!Opportunity.id}" value="Cancel"></apex:commandButton>
+                        </apex:pageBlockButtons>
+                        <apex:dataTable value="{!DocumentList}" var="document" styleClass="tableClass" rowClasses="odd,even">
+                            <apex:column style="vertical-align: middle;">
+                                <apex:commandButton rerender="output" value="Import" action="{!import}"
+                                                    onclick="importing();" rendered="{!document.importable}">
+                                    <apex:param name="importID" assignTo="{!importID}" value="{!document.id}"></apex:param>
+                                </apex:commandButton>
+                                <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                            </apex:column>
+                            <apex:column >
+                                &nbsp;
+                            </apex:column>
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Name</apex:facet>
+                                <apex:outputText value="{!document.name}" />
+                            </apex:column>
+                            
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Filesize</apex:facet>
+                                <apex:outputText value="{!document.bodyLength}b" />
+                            </apex:column>
+                            
+                            
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Type</apex:facet>
+                                <apex:outputText value="{!document.contentType}" />
+                            </apex:column>
+                        </apex:dataTable>
+                    </apex:pageBlock>
+                </apex:form>
+            </div>
+            <div id="message">
+                <apex:pageBlock >
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+            function importing()
+            {
+                document.getElementById("list").style.display = "none";
+                document.getElementById("message").style.display = "block";
+            }
+            </script>
+        
+    
+</apex:page>

@@ -1,0 +1,200 @@
+<apex:page controller="codetogether.Treaty_Account_Controller" Title="Treaty Account Information" action="{!checkapi}" >
+    <apex:sectionheader title="Treaty Account Information"></apex:sectionheader>
+    <apex:pageBlock >
+        
+        <style type="text/css">
+            label { display: block; }
+            input[type=text], input[type=email] { min-width: 50%; }
+            .errors div { background-color: pink; border: solid red 2px; padding: .5em; margin: .5em; }
+            .errors div:first-child { margin-top: 1em; }
+            .errors div:last-child { margin-bottom: 1em; }
+            
+            .success div { background-color: lightgreen; border: solid green 2px; padding: .5em; margin: .5em; }
+            .success div:first-child { margin-top: 1em; }
+            .success div:last-child { margin-bottom: 1em; }
+        </style>
+        <apex:form >
+            
+            <div class="success">
+                <apex:outputPanel rendered="{!Success != null}" layout="block">Success! {!Success}</apex:outputPanel>
+            </div>
+            <div class="errors">
+                <apex:outputPanel rendered="{!Notice != null}" layout="block">Update Failed: {!Notice}</apex:outputPanel>
+
+            </div>	
+            
+            <apex:outputPanel rendered="{!apiKey != '' }">
+                
+                
+                <dl>
+                    <dt id="users-label">
+                        <label for="users" >User Licenses</label>
+                    </dt>
+                    <dd id="users-element">
+                        <input type="number" min="2" name="users" id="users" value="{!fields['users']}" /> 
+                        <br /><small>*Minimum: 2 users.  View pricing information <a href="https://treatytime.com/pricing" target="_blank">HERE</a>.</small>
+                    </dd>
+                    
+                    <dt id="fname-label"><label for="fname" >First Name</label></dt>
+                    <dd id="fname-element">
+                        <input type="text" name="firstName" id="firstName" value="{!fields['firstName']}" /></dd>
+                    
+                    <dt id="lname-label"><label for="lname" >Last Name</label></dt>
+                    <dd id="lname-element">
+                        <input type="text" name="lastName" id="lastName" value="{!fields['lastName']}" /></dd>
+                    
+                    <dt id="email-label"><label for="email" >Email</label></dt>
+                    <dd id="email-element">
+                        <input type="text" name="email" id="email" value="{!fields['email']}" /></dd>
+                    
+                    <dt id="company-label"><label for="company" >Company</label></dt>
+                    <dd id="company-element">
+                        <input type="text" name="company" id="company" value="{!fields['company']}" /></dd>
+                    
+                    <br />
+                    <h1>
+                        Billing Info
+                    </h1>
+                    <br />
+                    <dt id="address-label"><label for="address" >Address</label></dt>
+                    <dd id="address-element">
+                        <input type="text" name="address1" id="address1" value="{!fields['address1']}" /><!--br />
+                        <input type="text" name="address2" id="address2" value="{!fields['address2']}" /--></dd>	
+                    
+                    <dt id="city-label"><label for="city" >City</label></dt>
+                    <dd id="city-element">
+                        <input type="text" name="city" id="city" value="{!fields['city']}" /></dd>
+                    
+                    <dt id="state-label"><label for="state" >State</label></dt>
+                    <dd id="state-element">
+                        <input type="text" name="state" id="state" value="{!fields['state']}" /></dd>
+                    
+                    <dt id="zip-label"><label for="zip" >ZIP code</label></dt>
+                    <dd id="zip-element">
+                        <input type="text" name="zip" id="zip" value="{!fields['zip']}" /></dd>	
+                    
+                    <dt id="country-label"><label for="country" >Country</label></dt>
+                    <dd id="country-element">
+                        <input type="text" name="country" id="country" value="{!fields['country']}" /></dd>
+                    
+                    <dt id="ccnumber-label"><label for="ccnumber" >Credit Card Number</label></dt>
+                    <dd id="ccnumber-element">
+                        <input type="text" name="ccnumber" id="ccnumber" value="{!fields['ccNumber']}" /></dd>
+                    
+                    <dt id="expMonth-label"><label for="expMonth" >Expiration Date</label></dt>
+                    <dd id="expMonth-element">
+                        <select name="expMonth" id="expMonth">
+                            <option  value="01">01</option>
+                            <option  value="02">02</option>
+                            <option  value="03">03</option>
+                            <option  value="04">04</option>
+                            <option  value="05">05</option>
+                            <option  value="06">06</option>
+                            <option  value="07">07</option>
+                            <option  value="08">08</option>
+                            <option  value="09">09</option>
+                            <option  value="10">10</option>
+                            <option  value="11">11</option>
+                            <option  value="12">12</option>
+                        </select> / 
+                        <select name="expYear" id="expYear">
+                            <apex:outputText escape="false" value="{!CCYears}"></apex:outputText>
+                        </select>
+                    </dd>
+                    
+                    <dt id="ccvnumber-label"><label for="securityCode" >Security Code</label></dt>
+                    <dd id="ccvnumber-element">
+                        <input type="text" name="securityCode" id="securityCode" value="" /></dd>	
+                    
+                    <dt id="plan-label">&#160;</dt>
+                    <dd id="submit-element">
+                        <button onclick="saveOnClick(); return false;">Update Account Info</button></dd></dl>
+            </apex:outputPanel>
+            <apex:actionFunction name="saveAccount" action="{!saveTreatyAccount}" 
+                                         status="myStatus">
+                        <apex:param name="firstName" value="" />
+                        <apex:param name="lastName" value="" />
+                        <apex:param name="company" value="" />
+                        <apex:param name="email" value="" />
+                        <apex:param name="users" value="" />
+                
+                
+                        <apex:param name="address1" value="" />
+                        <apex:param name="address2" value="" />
+                        <apex:param name="city" value="" />
+                        <apex:param name="state" value="" />
+                        <apex:param name="zip" value="" />
+                        <apex:param name="country" value="" />
+                        <apex:param name="ccnumber" value="" />
+                        <apex:param name="expMonth" value="" />
+                        <apex:param name="expYear" value="" />
+                        <apex:param name="securityCode" value="" />
+                                
+                    </apex:actionFunction>
+                    <script type="text/javascript">
+                    function saveOnClick()
+                    {
+                        
+                        var validateEmail = function(email) {
+                            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                            return re.test(email);
+                        }
+                        
+                        var firstName = document.getElementById('firstName').value;
+                        var lastName = document.getElementById('lastName').value;
+                        var company = document.getElementById('company').value;
+                        var email = document.getElementById('email').value;
+                        var users = parseInt(document.getElementById('users').value);
+                        
+                        
+                        var address1 = (document.getElementById('address1').value);
+                        var address2 =  ""; //(document.getElementById('address2').value);
+                        var city =  (document.getElementById('city').value);
+                        var state =  (document.getElementById('state').value);
+                        var zip =  (document.getElementById('zip').value);
+                        var country =  (document.getElementById('country').value);
+                        var ccnumber =  (document.getElementById('ccnumber').value);
+                        var expMonth =  (document.getElementById('expMonth').value);
+                        var expYear =  (document.getElementById('expYear').value);
+                        var securityCode =  (document.getElementById('securityCode').value);
+                        
+                        var errors = [];
+                        
+                        if(firstName.length < 1)
+                        {
+                            errors.push("First name is a required field.");
+                        }
+                        if(lastName.length < 1)
+                        {
+                            errors.push("Last name is a required field.");
+                        }
+                        if(email.length < 1)
+                        {
+                            errors.push("Email is a required field.");
+                        }
+                        if(!validateEmail(email))
+                        {
+                            errors.push('Must have a valid email address.')
+                        }
+                        
+                        if(errors.length === 0)
+                        {
+                            saveAccount(firstName, lastName, company, email, users, address1, address2, city, state, zip, country, ccnumber, expMonth, expYear, securityCode);
+                        }
+                        else
+                        {
+                            errorElem = document.getElementById("errors");
+                            errorElem.innerHTML = "";
+                            for(var i = 0, x = errors.length; i < x; i++)
+                            {
+                                errorElem.innerHTML += "<div>"+errors[i]+"</div>\n";
+                            }
+                        }
+                    }
+            </script>
+            
+            
+            
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

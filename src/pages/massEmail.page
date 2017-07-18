@@ -1,0 +1,39 @@
+<apex:page standardController="Position__c"  extensions="sendMassMailController" sidebar="false">
+<apex:form >
+<apex:pageBlock id="pb">
+        <apex:variable var="ind" value="{!-1}">
+    
+    <apex:pageBlockTable value="{!appList}" var="app">
+        <apex:column headerValue="chek/uncheck">
+            <apex:inputCheckbox id="check" value="{!app.selected}" />
+        </apex:column>
+        <apex:column headerValue="Application Name">
+             <apex:variable var="ind" value="{! ind +1}"/>
+            <apex:outputField value="{!app.appl.name}"/> 
+           
+        </apex:column>
+        <apex:column headerValue="Position">
+            <apex:outputField value="{!app.appl.Position__c}"/>
+        </apex:column>
+        <apex:column headerValue="Candidate">
+            <apex:outputField value="{!app.appl.Candidate__c}"/>
+        </apex:column>
+        <apex:column headerValue="status">
+            <apex:outputField value="{!app.appl.Status__c}"/>
+        </apex:column>
+        <apex:column headerValue="email">
+            <apex:outputField value="{!app.appl.candidate__r.Email__c}"/>
+        </apex:column>
+        
+    </apex:pageBlockTable>
+    </apex:variable>
+<apex:pageBlockButtons >
+
+<apex:commandButton value="Next" action="{!next1}"/>
+ 
+</apex:pageBlockButtons>
+
+
+</apex:pageBlock>
+</apex:form>
+</apex:page>

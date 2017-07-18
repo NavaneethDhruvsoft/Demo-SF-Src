@@ -1,0 +1,127 @@
+<apex:page standardstylesheets="false" showheader="false" sidebar="false"
+           controller="FastCall.FastCallSoftPhoneController" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+    <html>    
+    <head>
+         <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+                font-family: Arial,Helvetica,sans-serif;
+                font-size: 75%;
+                overflow: hidden;
+                background-color: #FFFFFF;
+            }
+            .visible {
+                display: block !important;
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+        
+        <apex:includeScript value="/support/console/36.0/integration.js"/>
+        <apex:includeScript value="/support/api/36.0/interaction.js"/>
+
+        <!-- LOAD DEVELOPMENT/PACKAGE CONTEXT CSS FILE -->
+        <apex:stylesheet value="{!style}" />
+
+        <!-- LOAD LIGHTNING DESIGN SYSTEM -->
+        <apex:stylesheet value="{!URLFOR($Resource.FastCall__Lightning_Static, 'assets/styles/salesforce-lightning-design-system-ltng.min.css')}" />
+
+        <apex:stylesheet value="https://fonts.googleapis.com/css?family=Droid+Sans+Mono" />
+    </head>
+    <body>
+        <div ng-controller="HeaderController" ng-class="{ 'external-border': loadingComplete && welcomeWidgetDeactivated && !transformToCallHeader }">
+        <div ng-class="{
+            'fc-widget': loadingComplete && welcomeWidgetDeactivated,
+            'fc-widget fc-widget-loading': !loadingComplete,
+            'fc-widget fc-welcome-widget': !welcomeWidgetDeactivated,
+            'call-in-progress': transformToCallHeader }">
+            <!-- SPINNER -->
+            <div class="slds">
+                <div class="spinner main-spinner" ng-if="!loadingComplete">
+                    <div class="slds-spinner_container">
+                        <div class="slds-spinner--brand slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- HEADER -->
+            <div class="slds" ng-class="{ 'fc-call-header-container': transformToCallHeader }">
+                <div class="welcome-header fc-default-header-box fc-default-header-styles slds-col slds-size--1-of-1 slds-grid slds-grid--vertical-align-center fc-call-header-{{statusMessage}}" esc-key-back="goBack()" ng-class="{
+                'widget-header-visible': welcomeWidgetDeactivated,
+                'fc-call-header': transformToCallHeader }">
+                    <!--Svg menu icon-->
+                    <fc-menu is-welcome-menu="false" ng-if="fastCallService.goBackTo == null && !hideIconMenu"></fc-menu>
+                    
+                    <!--Svg back icon-->
+                    <div ng-click="goBack()" ng-if="fastCallService.goBackTo !== null" ng-class="{ 'go-back-white': transformToCallHeader }">
+                        <svg aria-hidden="true" class="fc-back-header-btn slds-icon-text-default">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/resource/FastCall__Lightning_Static/assets/icons/utility-sprite/svg/symbols.svg#back"></use>
+                        </svg>
+                    </div>
+
+                    <!-- <div class="fc-default-logo-size logo-fc slds-col slds-size--1-of-1" ng-class="{'fc-call-logo': transformToCallHeader}"></div> -->
+                    <span class="slds-grid slds-grid--align-center" ng-if="!transformToCallHeader">
+                        <svg aria-hidden="true" class="fc-default-logo">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/resource/FastCall__C2C/imgs/svg/imgs-1472561865936.svg#fc-logo"></use>
+                        </svg>
+                        <span class="slds-assistive-text">FastCall Logo</span>
+                    </span>
+
+                    <!--Svg settings icon-->
+                    <div ng-click="selectCallSettings()" title="Widget Settings" ng-if="showSettingsButton">
+                        <svg aria-hidden="true" class="fc-header-settings-btn">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/resource/FastCall__C2C/imgs/svg/imgs-1472561865936.svg#settings"></use>
+                        </svg>
+                    </div>
+
+                    <!-- CALL PANEL -->
+                    <div ng-if="transformToCallHeader">
+                        <h2 class="call-header-text slds-text-heading--label">{{ statusMessageTitle }}</h2>
+                    </div>
+                    <!-- CALL PANEL -->
+
+                </div>
+            </div>
+            <!-- NG_VIEW -->
+            <apex:outputPanel layout="block" html-data-ng-view="" styleClass="animateView">
+            </apex:outputPanel>
+        </div>
+        </div>
+        <!-- App Modal -->
+        <script type="text/ng-template" id="modal.html">
+            <div class="slds">
+                <div class="fastcall-modal slds-modal--prompt">
+                    <div class="slds-modal__header slds-notify slds-notify--alert slds-theme--alert-texture slds-p-top--medium">
+                        <!-- <div class="fc-close-btn" title="Close" ng-click="closeWarningCallDeviceMsg('closeMessageOnly')"></div> -->
+                        <h2 class="slds-text-heading--small">{{ modalOptions.headerText }}</h2>
+                    </div>
+                    <div class="fastcall-modal-content slds-modal__content slds-p-around--medium fc-alert-message-body">
+                        <div class="slds-text-body--small" ng-bind-html="modalOptions.bodyText">
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-m-around--x-small">
+                        <button class="fc-dialog-button slds-button slds-button--neutral slds-col slds-size--1-of-1" ng-click="modalOptions.ok()">{{ modalOptions.reloadSettings ? 'Reload' : 'Ok' }}</button>
+                        <label class="slds-col slds-size--10-of-12">
+                            <a href="http://www.fastcall.com/products/click-to-call/pricing.html" target="_blank" class="btn" ng-if="modalOptions.isUpgrade" ng-click="modalOptions.ok()">Upgrade!</a>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </script>
+        <!-- App Javascript Dependencies -->
+        <apex:repeat value="{!js}" var="js">
+            <script src="{!js}"></script>
+        </apex:repeat>
+        <!-- Init App Script -->
+        <script type="text/javascript">
+            // Init FastCall Application
+            initApp("{!resolveAppBase}",{!isPackageContext});
+        </script>
+    </body>
+    </html>
+    
+</apex:page>

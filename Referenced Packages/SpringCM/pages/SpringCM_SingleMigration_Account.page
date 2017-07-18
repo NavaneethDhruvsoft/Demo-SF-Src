@@ -1,0 +1,4 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+	<c:SpringCM_EOSGrid objectType="Account" objectId="{!Account.Id}" startMigration="true" />
+	<!-- <apex:iframe src="/apex/SpringCM_EOSGrid?id={!Account.Id}&type=Account&startmigration=true" id="springFrame" /> -->
+</apex:page>

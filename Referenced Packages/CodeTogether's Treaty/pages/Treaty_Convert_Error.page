@@ -1,0 +1,8 @@
+<apex:page >
+     <apex:sectionHeader title="Export Error"></apex:sectionHeader>
+    <apex:pageBlock >
+        <p>
+            There was a problem.  Your document could not be uploaded for conversion.  Try again later or contact an administrator.
+        </p>
+    </apex:pageBlock>
+</apex:page>

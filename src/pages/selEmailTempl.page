@@ -1,0 +1,21 @@
+<apex:page standardController="Position__c" extensions="sendMassMailController">
+    <apex:pageBlock >    
+    <apex:pageBlockSection title="No. of Selected Applications" >
+    <h1>no .of selected applications are : {!count}</h1>  
+    </apex:pageBlockSection>
+    <apex:pageBlockSection title="Select Email Template">
+       <apex:form >
+         <apex:selectList value="{!selectedTemplateId}" multiselect="false" size="1">
+             <apex:selectOptions value="{!myPersonalTemplateOptions}" />
+         </apex:selectList><br/>
+         <apex:commandButton action="{!next2}" value="next2"/>
+       </apex:form>
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockTable id="pbt" value="{!selectedappls}" var="a">
+        <apex:column headerValue="application">
+        <apex:outputfield value="{!a.candidate__r.Email__c}" />
+        </apex:column>
+    </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

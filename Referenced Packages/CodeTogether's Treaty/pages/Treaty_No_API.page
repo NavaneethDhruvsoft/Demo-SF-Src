@@ -1,0 +1,271 @@
+<apex:page controller="codetogether.Treaty_No_API_Controller" Title="Treaty API Key not found" >
+    <apex:sectionheader title="Welcome to Treaty"></apex:sectionheader>
+	<apex:pageBlock >
+        
+        <style type="text/css">
+            label { display: block; }
+            input[type=text], input[type=email] { min-width: 50%; }
+            .errors div { background-color: pink; border: solid red 2px; padding: .5em; margin: .5em; }
+            .errors div:first-child { margin-top: 1em; }
+            .errors div:last-child { margin-bottom: 1em; }
+            
+            .success div { background-color: lightgreen; border: solid green 2px; padding: .5em; margin: .5em; }
+            .success div:first-child { margin-top: 1em; }
+            .success div:last-child { margin-bottom: 1em; }
+        </style>
+        <apex:form >
+           
+    		<div class="success">
+                <apex:outputPanel rendered="{!Success != null}" layout="block">Success! {!Success}</apex:outputPanel>
+            </div>
+            <!--
+            <apex:outputPanel layout="block" rendered="{!apiKey == ''}">
+                <h1>
+                    Your org has not yet entered an API key. Please contact an administrator.
+                </h1>
+            </apex:outputPanel>
+                -->    
+           <div class="errors">
+                <apex:outputPanel rendered="{!Notice != null}" layout="block">Registration Failed: {!Notice} <script type="text/javascript">
+               setTimeout( function(){
+                   
+                   editRegistration()
+                   
+                   }, 10);
+               </script></apex:outputPanel>
+              
+            </div>	
+            
+            <apex:outputPanel rendered="{!apiKey == '' }">
+                
+                
+			<div id="advanced_registration" style="display: none;">
+                           
+                <div>
+                    <br />
+                    <div>
+                        Advanced Registration Info:
+                    </div>
+                    <div id="register_info">
+                        
+                        <label>User Licenses</label>
+                        <input type="number" min="2" name="users" id="users" value="{!fields['users']}" /> *Minimum: 2 users.  View pricing information <a href="https://treatytime.com/pricing" target="_blank">HERE</a>.
+                        <label>First Name</label>
+                        <input type="text" name="firstName" id="firstName" value="{!fields['firstName']}" />
+                        <br />
+                        <label>Last Name</label>
+                        <input type="text" name="lastName" id="lastName" value="{!fields['lastName']}" />
+                        <br />
+                        <label>Email Address</label>
+                        <input type="email" name="email" id="email" value="{!fields['email']}" />
+                        <br />
+                        <label>Company <small>(optional)</small></label>
+                        <input type="text" name="company" id="company" value="{!fields['company']}" />
+                        
+                    </div>
+                    <!--<br />
+    <label>Password <small>(used to log in to treatytime.com)</small></label>
+    <input type="password" name="password" id="password" value="" />
+    <br />
+    <label>Confirm Password</label>
+    <input type="password" name="confirmPassword" id="confirmPassword" value="" />
+    -->
+                    <br />
+                    
+                </div>
+            </div>
+                
+                
+                <div id="signupForm">
+                    
+                    <div>
+                        <button id="BIGREGISTERBUTTON" onclick="newOnClick(); return false;"><u>Click here</u> to finish installing Treaty and start your <u>free trial</u>!</button>
+                        <style type="text/css">
+                        #BIGREGISTERBUTTON
+                            {
+                            padding: 2em;
+                            background: #90EE90;
+                            margin: 1em 0;
+                            cursor: pointer;
+                            font-size: 125%;
+                            
+                            }
+                            #BIGREGISTERBUTTON:hover
+                            {
+                            	background: #C8F7C8;
+                            }
+                            #register_info
+                            {
+                            padding-left: 1em;
+                            }
+                            #register_info label
+                            {
+                            	font-size: 100%;
+                            	margin-top: .5em;
+                            	margin-left: .5em;
+                            }
+                            #register_info input
+                            {
+                            	padding: .25em;
+                            }
+                        </style>
+                        
+                    </div>
+                    
+                    <apex:actionFunction name="newAPI" action="{!newAPI}" 
+                                         status="myStatus">
+                        <apex:param name="firstName" value="" />
+                        <apex:param name="lastName" value="" />
+                        <apex:param name="company" value="" />
+                        <apex:param name="email" value="" />
+                        <apex:param name="users" value="" />
+                    </apex:actionFunction>
+                    <script type="text/javascript">
+                    function newOnClick()
+                    {
+                        var validateEmail = function(email) {
+                            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                            return re.test(email);
+                        }
+                        
+                        var firstName = document.getElementById('firstName').value;
+                        var lastName = document.getElementById('lastName').value;
+                        var company = document.getElementById('company').value;
+                        var email = document.getElementById('email').value;
+                        //var password = document.getElementById('password').value;
+                        //var confirmPassword = document.getElementById('confirmPassword').value;
+                        var users = parseInt(document.getElementById('users').value);
+                        
+                        var errors = [];
+                        
+                        if(firstName.length < 1)
+                        {
+                            errors.push("First name is a required field.");
+                        }
+                        if(lastName.length < 1)
+                        {
+                            errors.push("Last name is a required field.");
+                        }
+                        if(email.length < 1)
+                        {
+                            errors.push("Email is a required field.");
+                        }
+                        if(!validateEmail(email))
+                        {
+                            errors.push('Must have a valid email address.')
+                        }
+                        /*if(password.length < 8)
+                        {
+                            errors.push("Password must be a minimum of 8 characters.");
+                        }
+                        if(password !== confirmPassword)
+                        {
+                            errors.push("Password and Confirm Password do not match.");
+                        }
+                        if(users < 2)
+                        {
+                            errors.push("Minimum of 2 users required.");
+                        }*/
+                        
+                        if(errors.length === 0)
+                        {
+                            newAPI(firstName, lastName, company, email, users);
+                        }
+                        else
+                        {
+                            errorElem = document.getElementById("errors");
+                            errorElem.innerHTML = "";
+                            for(var i = 0, x = errors.length; i < x; i++)
+                            {
+                                errorElem.innerHTML += "<div>"+errors[i]+"</div>\n";
+                            }
+                        }
+                    }
+                    
+                    
+                    function editRegistration(){
+                        var div = document.getElementById("advanced_registration");
+                        if(div.style.display == "none")
+                        {
+                            div.style.display = "block";
+                        }
+                        else
+                        {
+                            div.style.display = "none";
+                        }
+                        
+                        div = document.getElementById("existing_key");
+                        if(div.style.display == "none")
+                        {
+                            div.style.display = "block";
+                        }
+                        else
+                        {
+                            div.style.display = "none";
+                        }
+                        div = document.getElementById("edit_reg_button");
+                        if(div.style.display != "none")
+                        {
+                            div.style.display = "none";
+                        }
+                        else
+                        {
+                            div.style.display = "block";
+                        }
+                    }
+                    </script>
+                     
+                    <a href="#" id="edit_reg_button" onclick="editRegistration(); return false;">Edit Registration...</a>
+                </div>
+            </apex:outputPanel>            
+            
+            
+            
+            <div id="existing_key"  style="display: none;">
+                
+                <div>
+                    <br />
+                    <b>OR</b>
+                    <br />
+                    <br />
+                </div>
+                
+                <div><apex:outputPanel layout="block" rendered="{!apiKey == ''}">
+                    <h1>Already have a Treaty Key? Enter it here.</h1>
+                    <br />
+                    </apex:outputPanel>
+                    <apex:actionFunction name="saveAPI" action="{!saveAPI}" 
+                                         status="myStatus">
+                        <apex:param name="apikey" value="" />
+                    </apex:actionFunction>
+                    <script type="text/javascript">
+                    function saveOnclick()
+                    {
+                        var apiKey = document.getElementById('apiKey').value;
+                        if(apiKey != "")
+                            {
+                                
+                                
+                        saveAPI(apiKey);
+                                }
+                        else
+                            {
+                                alert("You must enter a valid key.");
+                                }
+                    }
+                    </script>
+                    
+                    <input type="text" id="apiKey" name="apiKey" value="{!apiKey}" />
+                    <br />
+                    <button onclick="saveOnclick(); return false;">Submit existing key</button>
+                    
+                    
+                    <p>
+                        Administrators can change the Key later under the Treaty Settings tab.
+                    </p>
+                </div>    
+            </div>
+        </apex:form>
+        
+    </apex:pageBlock>
+</apex:page>

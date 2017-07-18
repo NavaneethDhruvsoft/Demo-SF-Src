@@ -1,0 +1,3 @@
+<apex:page action="{!start}" standardController="codetogether__Treaty_Show_Theme__c" extensions="codetogether.Treaty_Show_Theme_Controller" applyBodyTag="false" applyHtmlTag="false" showHeader="false" showChat="false" sidebar="false" contentType="text/plain">
+    {!output}
+</apex:page>

@@ -1,0 +1,4 @@
+<apex:page standardController="Position__c" extensions="sendMassMailController" sidebar="false">
+      
+      <h1> {!succount} mails sent succesfully </h1>
+</apex:page>

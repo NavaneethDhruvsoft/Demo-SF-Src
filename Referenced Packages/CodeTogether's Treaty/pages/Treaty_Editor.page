@@ -1,0 +1,348 @@
+<apex:page title="{!codetogether__Treaty_Document__c.name} - Treaty Write Editor" tabstyle="codetogether__Treaty_Document__c" sidebar="false" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Editor_Controller_Extension" action="{!verifyPermissions}" >
+    
+    
+    <script type="text/javascript"
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript"
+    src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    
+
+    
+    <script type="text/javascript"
+    src="{!URLFOR($Resource.tinymce,
+    'tinymce/js/tinymce/tinymce.min.js')}"></script>
+    
+    <script type="text/javascript"
+    src="https://{!nodeServer}:4900/socket.io/socket.io.js"></script>
+    <script type="text/javascript"
+    src="https://{!nodeServer}:4900/treaty/treaty.js"></script>
+    <script type="text/javascript"
+    src="https://{!nodeServer}:4900/treaty/tinymceEditor4.js"></script>
+    
+    <script type="text/javascript">
+    
+    if(typeof console.debug != "function"){console.debug = function(str){}}
+    
+    
+    //when the document is loaded
+    docID = "{!doc.id}";//getParameterByName("doc");
+    apiKey = "{!apiKey}";
+    
+    var showPreview = function(){
+   		var myWindow = window.open("{!$Page.Treaty_Preview}?id=" + docID, "", "width=1200, height=600");        	
+    }
+    
+    theEditor = null;
+    var addUser = function(user)
+    {
+        var ul = document.getElementById("userlist");
+        var li = document.createElement("li");
+        if(user.personID == Session.me.personID)
+            li.innerHTML = "Me";
+        else
+            li.innerHTML = user.info.firstName + " " + user.info.lastName;
+        li.id = "user_"+user.personID;
+        ul.appendChild(li);
+    } 
+    var updateNotification = function(message)
+    {
+        var d = new Date();
+        var hour = d.getHours();
+        var am = "am";
+        if(hour == 12)
+        {
+            am = "pm";
+        }
+        if(hour == 0)
+        {
+            hour = 12;
+        }
+        if(hour > 12)
+        {
+            hour -= 12;
+            am = "pm"
+        }
+        var minutes = d.getMinutes();
+        if(minutes < 10)
+            minutes = "0"+minutes;
+        
+        var seconds= d.getSeconds();
+        if(seconds< 10)
+            seconds= "0"+seconds;
+        
+        $("#notificationArea").html(message + hour +":"+minutes+":"+seconds+""+am);
+    }
+    var saveSnapshot = function(){
+        $.ajax({
+            url : "/apex/Treaty_Create_Snapshot",
+            type : "POST",
+            data : {
+                apiKey : apiKey,
+                sessionID : docID,
+                content : theEditor.read()
+            },
+            success : function(data)
+            {
+                console.log("snapshot saved");
+            }.cc(this)
+        });
+    }
+    
+    function getMergeField(optionVal) {
+         optionVal = '{' + optionVal + '}';
+         return optionVal;
+    } 
+    
+    function getFieldLabel(label) {
+         try {
+                 var duplicateLabelSuffix = '{!duplicateLabelSuffix}';
+                 var duplicateLabelSuffixIndex = label.indexOf(duplicateLabelSuffix);
+                 if( duplicateLabelSuffixIndex > -1){
+                    label = label.substring(0, duplicateLabelSuffixIndex );
+                 }
+         }
+         catch(e){
+             alert(e); 
+         }
+         return label;
+    } 
+    
+    $(document).ready(function(){
+        //Setup the session
+        Session = new Treaty.Session({
+            serverURL: "https://{!nodeServer}",
+            sessionID : docID,
+            apiKey : apiKey,
+            me : new Treaty.Person({
+                personID : "{!$User.Id}",
+                info : {
+                    firstName: "{!$User.FirstName}",
+                    lastName: "{!$User.LastName}",
+                    alias: "{!$User.Alias}",
+                    mail: "{!$User.Email}"
+                }
+            })
+        });
+        
+        //add user to list every time a user joins the session
+        Session.bind("personJoined", function(e, person){
+            if(person.personID == Session.me.personID)
+            {
+                document.getElementById("userlist").innerHTML = "";
+                addUser(Session.me);
+                for(var i in Session.people)
+                {
+                    if(i == Session.me.personID)
+                        continue;
+                    
+                    var p = Session.people[i];
+                    addUser(p);
+                }
+            }
+            else
+            {
+                addUser(person);
+            }
+        });
+        //remove the person from the list if he leaves
+        Session.bind("personLeft", function(e, person){
+            var li = document.getElementById("user_" + person.personID);
+            if(li)
+                li.parentNode.removeChild(li);
+        });
+        //print a list of current users when the session is connected
+        Session.bind("connected", function(e, a){
+            //console.debug(Session.people);
+        });
+        
+        //restore the document in question from the database
+        $.ajax({
+            url : "/apex/Treaty_Get_Document",
+            type : "POST",
+            data : {
+                doc : Session.sessionID
+            },
+            dataType : "text",
+            success : function(msg) {
+                $("#txt").val(msg);
+            },
+            
+            complete : function(x, s)
+            {
+                updateNotification("Restored at ");
+                //when the get has completed, success or failure...
+                
+                //connect the session to the server
+                Session.connect();
+                
+                fonts = "";
+                fonts += "Arial='Arial',arial,helvetica,sans-serif;";
+                fonts += "Courier New='Courier New',courier new,courier,monospace;";
+                fonts += "Comic Sans='Comic Sans MS',comic sans ms,comic sans;";
+                fonts += "Times New Roman='Times New Roman',Georgia,times,serif";
+                
+                //set up tinyMCE
+                tinyMCE.init({
+                    selector: "#txt",
+                    theme: "modern",
+                    plugins :[
+                        "save table image textcolor code"
+                    ], 
+                    valid_elements: '*[*]',
+                    extended_valid_elements : "style[*]",
+                    custom_elements: "~style",
+                    statusbar : false,
+                    menubar: false,
+                    toolbar : "save | bold italic underline strikethrough | fontselect fontsizeselect | backcolor forecolor | bullist numlist | alignleft aligncenter alignright alignjustify | outdent indent blockquote | image | table | code | mergeFieldButton",
+                    toolbar_items_size: 'medium',
+                    image_list : "/apex/Treaty_Image_List",
+                    image_advtab: true,
+                    convert_urls : false,
+                    save_enablewhendirty: false,
+                    save_onsavecallback : function(){ 
+                        $.ajax({
+                            url : "/apex/Treaty_Save_Frost",
+                            type : "POST",
+                            data : {
+                                apiKey : apiKey,
+                                sessionID : docID,
+                                content : theEditor.read()
+                            },
+                            success : function(data)
+                            {
+                                updateNotification("Saved at ");
+                            }.cc(this)
+                        });
+                        return false; 
+                    },
+                    
+                    setup : function(ed) {
+                        ed.addButton('mergeFieldButton', {
+                            type: 'menubutton',
+                            text: 'Insert Merge Field', 
+                            icon: false,
+                            menu: [ 
+                                <apex:repeat value="{!apiKeyToFieldNameMap}" var="FieldLabel" id="repeat">
+                                    {text: getFieldLabel("{!FieldLabel}"), onclick: function() {ed.insertContent( getMergeField("!{!relatedObjectName}.{!apiKeyToFieldNameMap[FieldLabel]}"));}},
+                                </apex:repeat>
+                               // {text: 'Field 2', onclick: function() {ed.insertContent( getMergeField('!Field 2'));}}
+                            ]
+                        });
+                        //when tinymce is set up, create the Treaty editor instance
+                        theEditor = Session.addEditor(
+                            new Treaty.TinymceEditor4({
+                                editorID : docID,
+                                textarea : "txt",
+                                tinymce : ed,
+                                serverURL : "https://{!NodeServer}"
+                            })
+                        );
+                        
+                        //create a snapshot every time a person enters
+                        saveSnapshot();
+                        
+                        
+                        historyCounter = 0;
+                        //interval
+                        //save 
+                        var lastHash = theEditor.currentHash;
+                        var interval = setInterval(function(){
+                            if(Session.isLeader())
+                            {
+                               if(theEditor.currentHash != lastHash)
+                                {
+                                    //every 30 saves, the leader will create a new snapshot
+                                    historyCounter ++;
+                                    if(historyCounter >= 30)
+                                    {
+                                        saveSnapshot();
+                                        historyCounter = 0;
+                                    }
+                                    
+                                    //if the hashes don't match, there was a change, so update the hash to check
+                                    lastHash = theEditor.currentHash;
+                                    
+                                    theEditor.requestHistory(function(e, history){
+                                        console.debug(history);
+                                    });
+                                    //save the content of the editor
+                                    $.ajax({
+                                        url : "/apex/Treaty_Save_Frost",
+                                        type : "POST",
+                                        data : {
+                                            apiKey : apiKey,
+                                            sessionID : docID,
+                                            content : theEditor.read()
+                                            //editorID : docID,
+                                            //filename : "",
+                                            //name : treatyName,
+                                            //isNew : treatyNew
+                                        },
+                                        success : function(data)
+                                        {
+                                            updateNotification("Saved at ");
+                                        }.cc(this)
+                                    });
+                                }
+                                else
+                                {
+                                    // the hashes match, so there's no change, so no need to hit the database
+                                    //  console.debug("nochange");
+                                }
+                            }
+                        }.cc(this), 1000);
+                        //end save interval
+                        
+                    }.cc(this)
+                    
+                });
+                
+            }.cc(this)
+            
+        });
+        
+    });
+    </script>
+    <style type="text/css">
+        #userlist
+        {
+        list-style: none;
+        martin: 0;
+        padding: 0;
+        }
+        #userlist li
+        {
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        }
+        #userlist li:after
+        {
+        content: ",&nbsp;";
+        }
+        #userlist li:last-child:after
+        {
+        content:"";
+        }
+    </style>
+    
+    <apex:sectionHeader title="Treaty Document" subtitle="{!codetogether__Treaty_Document__c.name}" />
+    <p>
+        <a href="/{!Treaty_Document__c.id}">&lt;&lt;Back to Treaty Document Details</a>
+    </p>
+    
+    <apex:pageBlock title="Current Users">
+        <div id="currentusers">
+            <ul id="userlist">
+            </ul>
+        </div>
+    </apex:pageBlock>
+    <br />
+    <button onclick="showPreview()">Preview</button>
+    <apex:pageBlock >
+        <span id="notificationArea" style="float: right"></span>
+        <br />
+        <textarea style="width: 100%; height: 500px;" id="txt"></textarea>
+    </apex:pageBlock>
+    
+</apex:page>

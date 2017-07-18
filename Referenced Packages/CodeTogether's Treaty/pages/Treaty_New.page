@@ -1,0 +1,40 @@
+<apex:page controller="codetogether.Treaty_New_Controller" action="{!TreatyNewInit}">
+<h1>New Treaty Document</h1>
+<p></p>
+<apex:form >
+        <!-- Define the JavaScript function sayHello-->
+        <apex:actionFunction name="newDoc" action="{!newDoc}" 
+        	rerender="out" status="myStatus">
+        	<apex:param name="filename" value="" />
+        </apex:actionFunction>
+<script type="text/javascript">
+	function newOnclick()
+	{
+		var filename = document.getElementById('filename').value;
+		newDoc(filename);
+	}
+</script>
+<style type="text/css">
+	label { display: block; }
+	input[type=text] { min-width: 50%; }
+</style>
+
+<label>Filename</label>
+<input type="text" id="filename" name="filename" value="new_treaty_doc" />
+
+<button onclick="newOnclick(); return false;">Create Document</button>
+
+<br />
+Status:
+<apex:outputPanel id="out" >
+    <apex:actionStatus id="myStatus">
+    	<apex:facet name="start">Creating...</apex:facet>
+        <apex:facet name="stop">{!status}</apex:facet>
+    </apex:actionStatus>
+    </apex:outputPanel>
+    
+</apex:form>
+
+
+
+</apex:page>

@@ -1,0 +1,7 @@
+<apex:page controller="testExts1" extensions="testExts2,testExsts3">
+  {!value}
+  {!x}
+  <apex:form >
+  <apex:commandButton action="{!submit}" value="Submit"/>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page controller="codetogether.Treaty_Import_Document_Controller" action="{!buildaction}">
+    {!output}
+</apex:page>

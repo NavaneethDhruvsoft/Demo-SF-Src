@@ -1,0 +1,10 @@
+<apex:page standardController="codetogether__Treaty_Document__c">
+  
+  <h2>If you are not redirected automatically, click here: <a href="/apex/apex/Treaty_New">Go To New Treaty Doc</a> </h2>
+  
+  <script type="text/javascript">
+    setTimeout(function(){
+        location.href="/apex/apex/Treaty_New";
+    }, 1000)
+  </script>
+</apex:page>

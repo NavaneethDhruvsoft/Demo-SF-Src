@@ -1,0 +1,4 @@
+<apex:page controller="ViewPdf">
+    <!--<iframe src="data:{!att.ContentType};base64,{!pdf}" style="width:700px;height:800px;"></iframe>-->
+    {!pdf}
+</apex:page>

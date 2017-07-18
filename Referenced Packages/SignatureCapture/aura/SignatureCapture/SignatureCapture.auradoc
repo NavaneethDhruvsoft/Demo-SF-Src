@@ -1,0 +1,25 @@
+<aura:documentation>
+	<aura:description>
+        <p>A <code>BGSIGCAP:SignatureCapture</code> component provides the capability to capture
+        a signature and store it against a particular Salesforce record as an image 
+        attachment named &quot;Signature.png&quot;</p>
+        <p>
+            Markup to use this component is shown below - note that the record id in this
+            case is present as an attribute of the enclosing component/app
+        </p>
+        <pre>
+&lt;BGSIGCAP:SignatureCapture recordId=&quot;{!v.recordId}&quot;
+                           startMsg=&quot;Click the button to get started&quot;
+                           enterMsg=&quot;Please sign below&quot;
+                           completeMsg=&quot;Here is the signature you entered&quot;
+                           width=&quot;50%&quot;
+                           height=&quot;200px&quot;/&gt;
+		</pre>
+        <p>A sample application is included with the package - to run the application navigate to 
+            <br/>
+            <code>https://&lt;instance&gt;.lightning.force.com/BGSIGCAP/SignHere.app?id=&lt;record_id&gt;</code><br/>
+            where <code>&lt;instance&gt;</code> is the Salesforce instance your org is on, e.g. eu5, and <code>&lt;record_id&gt;</code>
+            is the id of a Salesforce record (e.g. account, contact) that exists in your instance.
+        </p>
+    </aura:description>
+</aura:documentation>

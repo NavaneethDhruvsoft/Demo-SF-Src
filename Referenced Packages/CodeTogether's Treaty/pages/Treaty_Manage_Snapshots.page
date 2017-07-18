@@ -1,0 +1,35 @@
+<apex:page title="Manage History Snapshots - {!codetogether__Treaty_Document__c.name}" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Document_Controller_Extension" action="{!checkAPI}" sidebar="false">
+    <apex:sectionHeader title="Treaty Document History" subtitle="Manage History Snapshots for {!codetogether__Treaty_Document__c.name}">
+        
+    <p>
+        <a href="{!URLFOR($Action.Treaty_Document__c.View_History, Treaty_Document__c.id)}">&lt;&lt;Back to History View</a>
+    </p>
+    </apex:sectionHeader>
+    
+    <apex:form onsubmit="return deleteConfirm()">
+        
+        <apex:pageBlock title="Snapshots">
+            
+        <apex:pageBlockButtons >
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable id="snapshotTable" value="{!historyList}" var="item">
+                <apex:column style="vertical-align: middle; text-align: center;">
+                    <apex:commandButton rerender="snapshotTable" value="Delete" action="{!deleteSnapshots}">
+                        <apex:param name="deleteID" assignTo="{!deleteID}" value="{!item[3]}"></apex:param>
+                    </apex:commandButton>
+                    <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                    
+                </apex:column>
+                <apex:column value="{!item[1]}" headerValue="Date of Snapshot"/> 
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+    <script type="text/javascript">
+    function deleteConfirm(){
+        //console.debug(deleteID);
+        var conf =  confirm('Delete Snapshot?  This cannot be undone.');
+        //console.debug(conf);
+        return conf;
+    }
+    </script>
+</apex:page>

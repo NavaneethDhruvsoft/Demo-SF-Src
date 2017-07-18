@@ -1,0 +1,28 @@
+<apex:page title="Import Document into Treaty Images" tabstyle="codetogether__Treaty_Image__c" controller="codetogether.Treaty_Import_Image_Controller" >
+    <apex:sectionHeader title="Treaty Images" subtitle="Import Document">
+    <p>
+        <a href="/apex/Treaty_Images_New">Cancel Import</a>
+    </p>
+    </apex:sectionHeader>
+    <apex:pageBlock >
+        <apex:form >
+            <apex:dataTable value="{!DocumentList}" var="document" styleClass="tableClass" rowClasses="odd,even">
+                <apex:facet name="header">Salesforce Documents</apex:facet>
+                <apex:column style="vertical-align: middle;">
+                    <apex:commandButton action="{!importDocument}" rerender="hiddenBlock" value="Import">
+                        <apex:param name="importID" assignTo="{!importID}" value="{!document.id}"></apex:param>
+                    </apex:commandButton>
+                    <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                </apex:column>
+                <apex:column style="vertical-align: middle;">
+                    <apex:facet name="header">Name</apex:facet>
+                    <apex:outputField value="{!document.name}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Preview</apex:facet>
+                    <apex:image style="max-width: 100px; max-height: 100px; " url="/servlet/servlet.FileDownload?file={!document.id}"/>
+                </apex:column>
+            </apex:dataTable>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

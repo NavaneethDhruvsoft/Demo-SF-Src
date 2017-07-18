@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customObject>true</customObject>
+    <description>Images that can be used within Treaty</description>
+    <icon>My_Shared_Folder/Treaty_Image_Icon.png</icon>
+    <mobileReady>false</mobileReady>
+    <motif>Custom305: TV Widescreen</motif>
+</CustomTab>

@@ -1,0 +1,230 @@
+<apex:page title="Export Treaty Document: {!codetogether__Treaty_Document__c.name}" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Export_Document_Controller" >
+    <apex:sectionHeader title="Treaty Documents" subtitle="Export Document: {!codetogether__Treaty_Document__c.name}"></apex:sectionHeader>
+    
+    <apex:form >
+        <apex:pageBlock >
+            <apex:actionFunction name="exportDoc" action="{!startExport}" 
+                                 rerender="out" status="myStatus">
+                <apex:param name="filename" value="" /> 
+                <apex:param name="folderID" value="" /> 
+                <apex:param name="filetype" value="" /> 
+                <apex:param name="locType" value="" /> 
+                <apex:param name="fileID" value="" /> 
+                <apex:param name="path" value="" /> 
+            </apex:actionFunction>
+            <script type="text/javascript">
+            function exportOnclick()
+            {
+                var filename = document.getElementById('filename').value;
+                var folderID = ""; //document.getElementById('folderID').value;
+                var filetype = document.getElementById('filetype').value;
+                var locType = "doc";
+                if(document.getElementById('loc_doc').checked)
+                    locType ="doc";
+                else if(document.getElementById('loc_file').checked)
+                    locType ="file";
+                    else if(document.getElementById('loc_version').checked)
+                        locType ="version";
+                    else if(document.getElementById('loc_dropbox').checked)
+                        locType ="dropbox";
+                    else if(document.getElementById('loc_box').checked)
+                        locType ="box";
+                
+                var fileID = document.getElementById('j_id0:j_id2:j_id3:fileID').value || ""; //only for new version of chatter file
+                
+                var path = document.getElementById("dropbox_actual_path").innerHTML;
+                /*
+                alert("filename: "+filename);
+                alert("folderID: "+folderID);
+                alert("filetype: "+filetype);
+                alert("locType: "+locType);
+                alert("fileID: "+fileID);
+                alert("path: "+path);
+                */
+                exportDoc(filename, folderID, filetype, locType, fileID, path);
+                //console.debug(fileID);
+                
+                return false;
+            }
+            
+            function showFilename()
+            {
+                document.getElementById("filename_field").style.display = "block";
+                document.getElementById("version_field").style.display = "none";
+                document.getElementById("dropbox_field").style.display = "none";
+            }
+            function showVersion()
+            {
+                document.getElementById("filename_field").style.display = "none";
+                document.getElementById("version_field").style.display = "block";
+                document.getElementById("dropbox_field").style.display = "none";
+            }
+            function showFiletree()
+            {
+                document.getElementById("filename_field").style.display = "block";
+                document.getElementById("dropbox_field").style.display = "block";
+                document.getElementById("version_field").style.display = "none";
+                
+                
+            }
+            </script>
+            <style type="text/css">
+                /*label { display: block; }*/
+                input[type=text] { min-width: 50%; }
+            </style>
+            <div>
+                <div>Export as:</div>
+                <input onchange="if(this.checked==true) showFilename()" checked="true" type="radio" name='location' id='loc_doc'/> <label for="loc_doc">New Document</label> 
+                <br />
+                <input onchange="if(this.checked==true) showFilename()" type="radio" name='location' id='loc_file'/> <label for="loc_file">New Chatter File</label> 
+                <br />
+                <input onchange="if(this.checked==true) showVersion()" type="radio" name='location' id='loc_version'/> <label for="loc_version">New Version for Existing Chatter File</label> 
+                <br />
+                
+                <input onchange="if(this.checked==true){ initDB(); showFiletree(); }" type="radio" name='location' id='loc_dropbox'/> <label for="loc_dropbox">Dropbox File</label> 
+                <br />
+                <input onchange="if(this.checked==true){ initBox(); showFiletree(); }" type="radio" name='location' id='loc_box'/> <label for="loc_box">Box File</label> 
+                <br />
+            </div>
+            <br />
+            <div id="filename_field">
+                <label>Filename:</label>
+                <input type="hidden" id="filename" name="filename" value="{!Treaty_Document__c.name}" />
+                <span>{!Treaty_Document__c.name}</span>
+            </div>
+            
+            <div id="version_field">
+                <label>Chatter File:</label>
+                <apex:selectList size="1" id="fileID">
+                    <apex:selectOptions value="{!FileList}" />
+                </apex:selectList>
+                
+            </div>
+            <div id="dropbox_field">
+                <Script src="{!URLFOR($Resource.TreatyResources, '/jquery/jquery.min.js')}"></Script>
+                <script src="{!URLFOR($Resource.TreatyResources, '/other/filebrowser.js')}"></script>
+                <script>
+                    jQuery.noConflict();
+                </script>
+                
+                <script>
+                
+                
+                function initDB(){
+                    //if(TREATY_FB.getRoot() !== null)
+                    //    return false;
+                    
+                    jQuery("#dropbox_path").text("/");
+                    jQuery("#dropbox_actual_path").text("/");
+                    TREATY_FB.initialize(jQuery("#treaty_file_browser"), "https://{!servicesServer}", "{!ApiKey}_{!userID}", "{!ApiKey}_{!userID}", "dropbox");
+                    //console.log(TREATY_FB);
+                    TREATY_FB.getRoot().off("treaty_directory_click");
+
+                    TREATY_FB.bindDirectoryClick(function(e, path, origEvent, origElem){
+                        jQuery("#dropbox_path").text(path + "/");
+                        jQuery("#dropbox_actual_path").text(path + "/");
+                        console.log(arguments);
+                        console.log(origElem);
+                        jQuery(".filebrowser_selected").removeClass("filebrowser_selected");
+                        jQuery(origElem).addClass("filebrowser_selected");
+                    });
+                    
+                }
+                
+                
+                function initBox(){
+                    //if(TREATY_FB.getRoot() !== null)
+                    //   return false;
+                    jQuery("#dropbox_path").text("/");
+                    jQuery("#dropbox_actual_path").text('');
+                    TREATY_FB.initialize(jQuery("#treaty_file_browser"), "https://{!servicesServer}", "{!ApiKey}_{!userID}", "{!ApiKey}_{!userID}", "box");
+                    TREATY_FB.getRoot().off("treaty_directory_click");
+                    TREATY_FB.bindDirectoryClick(function(e, path, origEvent, origElem){
+                        path = path.split("_", 2);
+                        jQuery("#dropbox_path").text(path[1] + "/");
+                        jQuery("#dropbox_actual_path").text(path[0]);
+                        console.log(arguments);
+                        console.log(origElem);
+                        jQuery(".filebrowser_selected").removeClass("filebrowser_selected");
+                        jQuery(origElem).addClass("filebrowser_selected");
+                    });
+                    
+                }
+                </script>
+                
+                <link href="{!URLFOR($Resource.TreatyResources, '/other/filebrowser.css')}" rel="stylesheet" />
+                <style type="text/css">
+                    #dropbox_import_form
+                    {
+                        display: none;
+                    }
+                    #treaty_file_browser li.file
+                    {
+                        display: none;
+                    }
+                    .filebrowser_selected
+                    {
+                        background: beige;
+                        display: inline-block;
+                        padding-right: 20px;
+                    }
+                    #dropbox_actual_path
+                    {
+                        display: none;
+                    }
+                    
+                </style>       
+                <span id="treaty_container">
+                    
+                    <div id="list">
+                        <ul id="treaty_file_browser">
+                        </ul>
+                    </div>
+                    <div>
+                        <span>File Path:</span>
+                       <span id="dropbox_path">/</span>
+                       <span id="dropbox_actual_path">/</span>
+                    </div>
+                </span>
+                
+            </div>
+            
+            <br />
+            <br />
+            <label>Filetype</label>
+            <select id="filetype" name="filetype">
+                <option selected="true">pdf</option>
+                <option>docx</option>
+                <option>html</option>
+                <option>rtf</option>
+                <option>txt</option>
+            </select>
+            
+            
+            <br />
+            <br />
+            <button onclick="exportOnclick(); return false;">Export</button>
+            
+            <br />
+            Status:
+            <apex:outputPanel id="out" >
+                <apex:actionStatus id="myStatus">
+                    <apex:facet name="start">Exporting...</apex:facet>
+                    <apex:facet name="stop"></apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+            <br />
+            <br />
+            *Exporting documents may not result in a pixel perfect copy. 
+            <br />
+            &nbsp;The DOCX format may not export images.
+            
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+    <script type="text/javascript">
+    showFilename();
+    document.getElementById("loc_doc").checked = true;
+    </script>
+    </apex:page>

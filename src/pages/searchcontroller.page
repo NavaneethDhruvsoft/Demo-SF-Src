@@ -1,0 +1,53 @@
+<apex:page controller="searchcontroller" docType="html-5.0">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="5">
+                <!--<apex:pageBlockTable>-->
+                <apex:inputText value="{!name}" html-placeholder="Account Name"/>
+                <apex:selectList value="{!selected}" multiselect="true" style="width:150px" id="f">
+                    <apex:selectOption itemValue=" Account Type "/>
+                    <apex:selectOptions value="{!typelist}"/>
+                    <apex:actionSupport event="onchange" action="{!multi}" reRender="f"/>
+                </apex:selectList>
+                <apex:selectList value="{!Industry}" size="1">
+                    <apex:selectOption itemValue=" Industry "/>
+                    <apex:selectOptions value="{!industrylist}"/>
+                </apex:selectList>
+                <apex:selectList value="{!Rating}" size="1" style="width:150px">
+                    <apex:selectOption itemValue=" Rating "/>
+                    <apex:selectOptions value="{!ratinglist}"/>
+                </apex:selectList>
+                <apex:selectList value="{!Ownership}" size="1" style="width:150px">
+                    <apex:selectOption itemValue=" Ownership "/>
+                    <apex:selectOptions value="{!ownershiplist}"/>
+                </apex:selectList>
+                <!--</apex:pageBlockTable>-->
+                
+            </apex:pageBlockSection>
+            <!--<apex:pageBlockSection columns="6" >
+                <!--<apex:panelGrid columns="6" width="100%" bgcolor="#ffcccc">
+               
+                        <apex:inputField value="{!ac.name}" required="false"/>
+                        <apex:inputField value="{!ac.type}"/>
+                        <apex:inputField value="{!ac.Industry}"/>
+                        <apex:inputField value="{!ac.Ownership}"/>
+                        <apex:inputField value="{!ac.Rating}"/>
+                      
+                       
+                <!--</apex:panelGrid>
+            </apex:pageBlockSection>-->
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Search" action="{!search}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="list" columns="1">
+                <apex:pageBlockTable value="{!acts}" var="a">
+                    <apex:column value="{!a.name}" headerValue="Account Name"/>
+                    <apex:column value="{!a.type}" headerValue="Type"/>
+                    <apex:column value="{!a.Rating}" headerValue="Rating"/>
+                    <apex:column value="{!a.Industry}" headerValue="Industry"/>
+                    <apex:column value="{!a.Ownership}" headerValue="Ownership"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

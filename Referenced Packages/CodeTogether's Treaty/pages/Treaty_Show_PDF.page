@@ -1,0 +1,1 @@
+<apex:page action="{!startExport}" controller="codetogether.Treaty_Show_PDF" showHeader="false" applyHtmlTag="false" contentType="text/plain">Loading... {!output}</apex:page>

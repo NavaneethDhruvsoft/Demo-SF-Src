@@ -1,0 +1,10 @@
+<apex:page >
+  <h1> User ID : </h1><apex:outputText >{!$User.Id}</apex:outputText><br/>
+  <h1> Email ID : </h1><apex:outputText >{!$User.Email}</apex:outputText><br/>
+  <h1> Phone : </h1><apex:outputText >{!$User.Phone}</apex:outputText><br/>
+  <h1> Title : </h1><apex:outputText >{!$User.Title}</apex:outputText><br/>
+  <h1> Name: </h1><apex:outputText >{!$User.FirstName}</apex:outputText><br/>
+  <h1> Name: </h1><apex:outputText >{!$User.LastName}</apex:outputText><br/>
+  
+ 
+</apex:page>

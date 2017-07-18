@@ -1,0 +1,28 @@
+<apex:page title="Upgrade Treaty Documents" controller="codetogether.Treaty_Frost_Document_Controller">
+    <apex:sectionHeader title="Treaty Documents" subtitle="Upgrade Treaty Documents">
+    </apex:sectionHeader>
+    <apex:form >
+        <apex:pageBlock >
+            <p>
+                Use this page to convert documents to the new Treaty 
+                format if you've recently upgraded to version 2
+            </p>
+            
+            <apex:actionFunction name="upgrade" action="{!upgradeaction}" 
+                                 rerender="out" status="myStatus">
+            </apex:actionFunction>
+            <button onclick="upgrade(); return false;">
+                Update
+            </button>
+            <apex:actionStatus id="myStatus">
+                <apex:facet name="start">Updating...</apex:facet>
+                <apex:facet name="stop"></apex:facet>
+            </apex:actionStatus>
+            <apex:outputPanel id="out" >
+                <p>
+                    {!output}
+                </p>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

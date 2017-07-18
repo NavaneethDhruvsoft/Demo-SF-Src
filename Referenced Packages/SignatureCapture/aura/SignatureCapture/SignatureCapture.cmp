@@ -1,0 +1,35 @@
+<aura:component controller="SignatureCaptureController" access="global" implements="flexipage:availableForAllPageTypes">
+    <aura:attribute access="global" name="startMsg" type="String" default="Click the 'Capture Signature' button to begin" 
+                     description="Message to display to the user to start the signature capture process"/>
+    <aura:attribute access="global" name="enterMsg" type="String" default="Sign here please" 
+                     description="Text to display above the signature capture canvas" />
+    <aura:attribute access="global" name="completeMsg" type="String" default="Here is the captured signature" 
+                     description="Text to display above the image of the captured signature once it has been saved to the server"/>
+    <aura:attribute access="global" name="recordId" type="String" required="true" 
+                     description="The id of the record to attach the signature to"/>
+    <aura:attribute access="global" name="width" type="String" required="true" default="100%"
+                    description="Width of the signature capture canvas"/>
+    <aura:attribute access="global" name="height" type="String" required="true" default="300px"
+                    description="Height of the signature capture canvas"/>
+    <aura:attribute name="logs" type="String[]" />
+        <div id="startcontent">
+            <p id="startmessage" class="message">{!v.startMsg}</p>
+            <ui:button aura:id="startbtn" label="Capture Signature" press="{!c.setup}"/>
+        </div>
+    
+        <div id="sigdiv" style="visibility:hidden; padding-top:10px; width:100%">
+            <p class="message">{!v.enterMsg}</p>
+            <div>
+				<canvas class="box" id="paint"></canvas>
+            </div>
+            <ui:button label="Save" press="{!c.save}"/>
+            <ui:button label="Clear" press="{!c.clear}"/>
+        </div>
+    
+        <div id="completecontent" style="display:none; padding-top:10px;">
+            <p id="completemessage" class="message">{!v.completeMsg}</p>
+            <img id="sigimage" style="border: solid 1px black;"/>
+        </div>
+		<div><center><ui:spinner aura:id="spinner" isVisible="false"/></center></div>        
+	    <div class="opaque"/>
+</aura:component>

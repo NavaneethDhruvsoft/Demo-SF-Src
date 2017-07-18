@@ -1,0 +1,80 @@
+<apex:page standardController="Offer__c" sidebar="false" extensions="offerLineItems">
+<apex:form >
+  <apex:pageMessages ></apex:pageMessages>
+    <apex:pageBlock id="pb">
+        <apex:pageBlockSection collapsible="true" title="OfferLineitems" id="olipb">
+            <apex:variable var="ind" value="{!-1}"/>
+            <apex:pageBlockTable value="{!olilist}" var="oli" align="CENTRE">
+                <apex:column headerValue="OfferID">
+                    <apex:variable var="ind" value="{! ind +1}"/>
+                    <apex:outputField value="{!oli.Offer__c}"/> 
+                </apex:column>
+                <apex:column headerValue="OfferLineItemId">
+                    <apex:inputField value="{!oli.Offer_line_item_id__c}"/> 
+                </apex:column>
+                <apex:column headerValue="SalaryComponent">
+                    <apex:inputField value="{!oli.Salary_component__c}"/> 
+                </apex:column>
+                <apex:column headerValue="% Of CTC">
+                    <apex:inputField value="{!oli.per_of_ctc__c }"/>
+                </apex:column>
+                <apex:column headerValue="Amount">
+                    <apex:outputField value="{!oli.Amount__c }"/>
+                </apex:column>
+                <apex:column >
+                    <apex:commandLink action="{!deleteRecord}" value="Del record" rerender="olipb"> 
+                        <apex:param value="{!ind}" name="myind1" assignTo="{!index}"/>
+                    </apex:commandlink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageblockSection>        
+        <apex:commandButton action="{!ok}" value="ok"  />
+        <apex:commandButton action="{!addLineItem}" value="Add Line Item" reRender="olipb"/>
+        <apex:commandButton action="{!saveLI}" value="Save Line Items" status="as" reRender="olipb"/>
+        <apex:actionStatus id="as" startText="saving..." > 
+            
+        </apex:actionStatus>
+    </apex:pageBlock>
+    <apex:pageBlock >
+        <apex:pageblockSection collapsible="true" title="Salary">
+            <apex:pageBlockTable value="{!sal}" var="s" id="sal1">
+               <apex:column headerValue="sal cand">
+                        <apex:outputField value="{!s.candidate__c }"/>
+               </apex:column>
+               <apex:column headerValue="sal offer">
+                        <apex:outputField value="{!s.offer__c }"/>
+               </apex:column>
+               <apex:column headerValue="sal Start Date">
+                        <apex:outputField value="{!s.Start_date__c }"/>
+               </apex:column>
+               <apex:column headerValue="sal EndDate">
+                        <apex:outputField value="{!s.End_date__c }"/>
+               </apex:column>
+               <apex:column headerValue="sal CTC">
+                        <apex:outputField value="{!s.CTC__c }"/>
+               </apex:column> 
+            </apex:pageBlockTable>
+        </apex:pageblockSection>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+        <apex:pageblockSection collapsible="true" title="Salary Line Items">
+            <apex:pageBlockTable value="{!slilist}" var="sli" id="sli1">
+               <apex:column headerValue="Salary Line Item Id">
+                        <apex:outputField value="{!sli.Salary_line_item_id__c }"/>
+               </apex:column>
+               <apex:column headerValue="sal % of ctc">
+                        <apex:outputField value="{!sli.perc_of_ctc__c }"/>
+               </apex:column>
+               <apex:column headerValue="Salary Id">
+                        <apex:outputField value="{!sli.Salary__c }"/>
+               </apex:column>
+               <apex:column headerValue="Amount">
+                        <apex:outputField value="{!sli.Amount__c }"/>
+               </apex:column>
+                
+            </apex:pageBlockTable>
+        </apex:pageblockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

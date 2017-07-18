@@ -1,0 +1,35 @@
+<apex:page controller="codetogether.Treaty_Delete_Document_Controller" action="{!deleteInit}" >
+
+
+<h1>Delete Document from Treaty</h1>
+<p></p>
+<apex:form >
+        <!-- Define the JavaScript function sayHello-->
+        <apex:actionFunction name="deleteDoc" action="{!deleteDoc}" >
+        </apex:actionFunction>
+<script type="text/javascript">
+	function deleteOnclick()
+	{
+		
+		deleteDoc();
+	}
+</script>
+<style type="text/css">
+	label { display: block; }
+	input[type=text] { min-width: 50%; }
+</style>
+
+
+Are you sure you want to delete the document from Treaty?  
+This action cannot be undone.  
+<br />
+(This does not affect the original document in your document library.)
+<br />
+<br />
+<button onclick="deleteOnclick(); return false;">Yes</button>
+
+<br />
+    
+</apex:form>
+<br />
+</apex:page>

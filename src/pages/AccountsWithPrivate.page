@@ -1,0 +1,15 @@
+<apex:page controller="AccountController" tabStyle="Account">
+    <apex:pageBlock title="accounts with private checked">
+   <apex:sectionHeader title="Accounts"/>
+   <apex:pageblockTable value="{!acclist}" var="accounts">
+   
+      <apex:column headerValue="Name" value="{!accounts.name}"/ >
+      <apex:column headerValue="Billing City" value="{!accounts.billingcity}"/>
+      <apex:column headerValue="Billing State" value="{!accounts.billingstate}"/ >
+      <apex:column headerValue="Phone" value="{!accounts.phone}"/ >
+      <apex:column headerValue="owner" value="{!accounts.ownerid}"/ >
+      <apex:column headerValue="private" value="{!accounts.private__c}"/ >
+   </apex:pageblockTable>
+  </apex:pageBlock>
+
+</apex:page>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>ACD_Call__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>ACD Call</label>
+        <required>false</required>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Answered</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Missed</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>ACD_Position__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>ACD Position</label>
+        <length>3</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Call_Duration_In_Minutes__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>TEXT(FLOOR(CallDurationInSeconds/60)) &amp; &quot;:&quot; &amp;
+IF(MOD(CallDurationInSeconds, 60) &lt; 10,
+&quot;0&quot; &amp; TEXT(MOD(CallDurationInSeconds, 60)),
+TEXT(MOD(CallDurationInSeconds, 60)))</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Call Duration In Minutes</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Call_Focus__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Call Focus</label>
+        <required>false</required>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>New business</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Upsell</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Cross sell</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Winback</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Call_From__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Phone number used as Caller Id when calling the target phone number</description>
+        <externalId>false</externalId>
+        <label>Call From</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Call_Goal__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Call Goal</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Call_Id__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <deprecated>false</deprecated>
+        <externalId>true</externalId>
+        <label>Call Id</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Call_Notes__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Notes taken by the FastCall application while on call</description>
+        <externalId>false</externalId>
+        <label>Call Notes</label>
+        <required>false</required>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Call_Number__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Call Number</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Call_Recording__c</fullName>
+        <deprecated>false</deprecated>
+        <description>URL to the audio file containing the call recording</description>
+        <externalId>false</externalId>
+        <label>Call Recording</label>
+        <required>false</required>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Call_Time__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>TEXT ( ABS ( VALUE ( MID ( TEXT ( CreatedDate ), 12, 2) ) - 7 ) ) &amp; MID ( TEXT ( CreatedDate ), 14, 3)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Call Time</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Call_To__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Target phone number dialed</description>
+        <externalId>false</externalId>
+        <label>Call To</label>
+        <required>false</required>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Conference_room_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Conference room ID</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Follow_Up_Call__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Follow Up Call</label>
+        <required>false</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>None</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>1 Day</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>2 Days</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>3 Days</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>1 Week</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>2 Weeks</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>From_City__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>From City</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_Country__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>From Country</label>
+        <length>4</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_State__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>From State</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>From_Zip__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>From Zip</label>
+        <length>20</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Is_Voicemail_Drop__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Is Voicemail Drop</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Related_Call_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <description>For internal use of the FastCall application</description>
+        <externalId>false</externalId>
+        <label>Related Call Id</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Spoke_to__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Spoke to?</label>
+        <required>false</required>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Decision maker</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Gatekeeper</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Other</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Twillio_Billing_Info__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF( ISNULL( CallObject ) , &quot;This Task is not a Call&quot;,  HYPERLINK(&quot;/apex/FastCall__TaskCallBillingInfo?id=&quot; &amp;  Id , &quot;View&quot; , &quot;_self&quot;) )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Twilio Billing Info</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Voicemail__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Voicemail</label>
+        <type>Checkbox</type>
+    </fields>
+</CustomObject>

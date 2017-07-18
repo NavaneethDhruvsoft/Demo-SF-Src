@@ -1,0 +1,38 @@
+<apex:page standardController="Task" 
+		   title="Assign SObject to Task" 
+		   extensions="FastCall.TaskAssignController"
+           cache="false"
+		   action="{!main}"
+           showHeader="false"
+           sidebar="false">
+    <apex:pageBlock title="Select Object to Assign">
+        <apex:form >
+            <apex:pageMessages >
+            </apex:pageMessages>
+            <apex:pageBlockTable value="{!objects}" var="item">
+                <apex:column >
+                    <apex:facet name="header">Id</apex:facet>
+                     {!item.Id}
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Name</apex:facet>
+                     {!item.Name}
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Object Type</apex:facet>
+                     {!item.Type}
+                </apex:column>
+                <apex:column >
+                    <apex:commandLink value="Assign" action="{!Save}">
+                        <apex:param name="selectedItemId"
+                            value="{!item.Id}"
+                            assignTo="{!selectedItemId}"/>
+                    </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:actionFunction action="{!Save}" name="onSelectItem">
+                <apex:param assignTo="{!selectedItemId}" value="" />
+            </apex:actionFunction>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,613 @@
+<apex:page action="{!checkapi}" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Document_Controller_Extension" title="New Treaty Document">
+   
+    <script src="{!URLFOR($Resource.TreatyResources, '/jquery/jquery.min.js')}"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/other/filebrowser.js')}"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/jquery/jquery-ui.min.js')}"></script>
+    <link href="{!URLFOR($Resource.TreatyResources, '/jquery/jqueryui.css')}" rel="stylesheet" />
+    
+    <script>
+         jQuery.noConflict();
+    </script>
+    <apex:sectionHeader title="New Treaty Document" help="Treaty_Help_Import_Document"/>
+    
+    <style type='text/css'>
+        .filetypes
+        {
+        padding: 10px;
+        }
+    </style>
+    <apex:tabPanel >
+        <apex:tab label="New Blank Document">
+            <apex:form >
+                
+                <apex:pageBlock >
+                    <apex:pageBlockButtons >
+                        <apex:commandButton action="{!save}" value="Create"></apex:commandButton>
+                        <apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                    </apex:pageBlockButtons>
+                    <apex:pageBlockSection >
+                        <apex:inputField required="true" value="{!codetogether__Treaty_Document__c.name}" label="Name"></apex:inputField>
+                        <apex:inputField required="true" value="{!codetogether__Treaty_Document__c.codetogether__Treaty_Type__c}" label="Type"></apex:inputField>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:form>
+        </apex:tab>
+        
+        
+        <!-- Save as Template -->
+        <apex:tab label="New From Template">
+            
+            <style type="text/css">
+                .tableClass
+                {
+                width: 100%;
+                }
+                .odd
+                {
+                background: lightgray;
+                }
+                #message
+                {
+                display: none;
+                }
+                #dialog-document-name,
+                #dialog-new-template-name{
+               	    padding-top: 28px;
+                }
+                .ui-dialog .ui-dialog-buttonset button[disabled] {
+				    cursor:not-allowed;
+				}
+            </style>
+            <div id="list">
+                <apex:form >
+                	<apex:actionFunction action="{!createDocument}" name="createDocumentFromTemplate" immediate="true" reRender="">
+			            	<apex:param name="templateId" assignTo="{!templateIdtoUseTemplate}" value=""/>
+			            	<apex:param name="documentName" assignTo="{!documentNamefromTemplate}" value=""/>
+			        </apex:actionFunction> 
+			        <apex:actionFunction action="{!createTemplate}" name="createNewTemplate" immediate="true" reRender="">
+			            	<apex:param name="templateName" assignTo="{!newTemplateName}" value=""/>
+			        </apex:actionFunction>
+                    <apex:pageBlock title="Existing Templates">
+                        <apex:pageBlockButtons >
+                            <apex:commandButton value="New Template"
+                            	onclick="openNewTemplateNameDialog(); return false;"></apex:commandButton>
+                        	<apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                        </apex:pageBlockButtons>
+                        <apex:dataTable value="{!TemplatesList}" var="template" styleClass="tableClass" rowClasses="odd,even"
+                        	rendered="{!TemplatesList.size > 0}">
+                            <apex:column style="vertical-align: middle;">
+                                <apex:commandButton value="Use Template" rerender="output"
+                                                    onclick="openDocumentNameDialog('{!template.id}'); return false;">
+<!--                                     <apex:param name="importID" assignTo="{!importID}" value="{!template.id}"></apex:param> -->
+                                </apex:commandButton>
+                                <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                            </apex:column>
+                            <apex:column >
+                                &nbsp;  
+                            </apex:column>
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Name</apex:facet>
+                                <apex:outputText value="{!template.name}" />
+                            </apex:column>
+                            
+                            <apex:column style="vertical-align: middle;">  
+                                <apex:facet name="header">Related To</apex:facet>
+                                <apex:outputText value="{!template.codetogether__Related_Object_API_Name__c}" />
+                            </apex:column>
+                        </apex:dataTable>
+                        <apex:outputpanel rendered="{!TemplatesList.size == 0}">No records to display.</apex:outputpanel>
+                    </apex:pageBlock>
+                    <div id="dialog-document-name" title="New Document from Template" >  
+		              <span>Document Name :- </span>
+		              <apex:inputText value="{!documentNamefromTemplate}" styleClass="documentNameInput"/>
+		            </div>  
+		            <div id="dialog-new-template-name" title="New Template" >  
+		              <span>Template Name :- </span>
+		              <apex:inputText value="{!newTemplateName}" styleClass="newTemplateNameInput"/>
+		            </div>  
+                </apex:form>
+            </div>  
+            <div id="message">
+                <apex:pageBlock >
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+	            function importing()
+	            {
+	                document.getElementById("list").style.display = "none";
+	                document.getElementById("message").style.display = "block";
+	            }
+	            
+	            jQuery("#dialog-document-name").dialog({
+	              autoOpen: false,
+	              resizable: false,
+	              height: 160,
+	              width: 350,
+	              modal: true,
+	              buttons: [
+		            {
+						text: "Save",
+						"class": 'save_button',
+						click: function() {                     
+							var value = jQuery('.documentNameInput').val();
+		                    if(value.trim().length == 0){
+		                    	alert('Please enter Document name');
+		                    	return;            
+		                    }
+		                    createDocumentFromTemplate(templateId, value);
+		                    jQuery( this ).dialog( "close" );
+					     }
+					  },
+					  {
+					     text: "Cancel",
+					     click: function() { 
+					        jQuery(this).dialog("close"); 
+					     }
+					  }
+					]  
+	            });
+	            
+	            jQuery( "#dialog-new-template-name" ).dialog({
+	              autoOpen: false,
+	              resizable: false,
+	              height: 160,
+	              width: 350,
+	              modal: true,
+	              buttons: [
+		            {
+						text: "Save",
+						"class": 'save_button',
+						click: function() {                     
+							var value = jQuery('.newTemplateNameInput').val();
+		                    if(value.trim().length == 0){
+		                    	alert('Please enter Template name');
+		                    	return;
+		                    }
+		                    console.log(value);
+		                    createNewTemplate(value);
+		                    jQuery( this ).dialog( "close" );
+					     }
+					  },
+					  {
+					     text: "Cancel",
+					     click: function() { 
+					        jQuery(this).dialog("close"); 
+					     }
+					  }
+					]
+	              
+	            });
+	            
+	            jQuery('.documentNameInput').keyup(function(){
+			        if(jQuery(this).val().trim().length !=0)
+			            jQuery('.save_button').attr('disabled', false);            
+			        else
+			            jQuery('.save_button').attr('disabled',true);
+			    })
+			    
+			    
+			    jQuery('.newTemplateNameInput').keyup(function(){
+			        if(jQuery(this).val().trim().length !=0)
+			            jQuery('.save_button').attr('disabled', false);            
+			        else
+			            jQuery('.save_button').attr('disabled',true);
+			    })
+            	
+            	var templateId;
+            	function openDocumentNameDialog(tempId){
+            		templateId = tempId;
+	                jQuery("#dialog-document-name").dialog('open');
+	                jQuery('.save_button').attr('disabled',true);
+	            }
+	            
+	            
+	            function openNewTemplateNameDialog(){
+	                jQuery("#dialog-new-template-name").dialog('open');
+	                jQuery('.save_button').attr('disabled',true);
+	            }
+            </script>
+        </apex:tab>
+        
+        
+        
+        <apex:tab label="Import Document">
+            
+            <apex:outputText id="output"></apex:outputText>
+            <style type="text/css">
+                .tableClass
+                {
+                width: 100%;
+                }
+                .odd
+                {
+                background: lightgray;
+                }
+                #message
+                {
+                display: none;
+                }
+            </style>
+            <div id="list">
+                <apex:form >
+                    <div class="filetypes">
+                        Acceptable filetypes include: .doc, .docx, .txt, .rtf, .pptx, .html, .pdf*
+                    </div>
+                    <apex:pageBlock title="Salesforce Documents">
+                        <apex:pageBlockButtons >
+                            <apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                        </apex:pageBlockButtons>
+                        <apex:dataTable value="{!DocumentList}" var="document" styleClass="tableClass" rowClasses="odd,even">
+                            <apex:column style="vertical-align: middle;">
+                                <apex:commandButton action="{!importDocument}" rerender="output" value="Import"
+                                                    onclick="importing();">
+                                    <apex:param name="importID" assignTo="{!importID}" value="{!document.id}"></apex:param>
+                                </apex:commandButton>
+                                <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                            </apex:column>
+                            <apex:column >
+                                &nbsp;
+                            </apex:column>
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Name</apex:facet>
+                                <apex:outputText value="{!document.name}.{!document.type}" />
+                            </apex:column>
+                            
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Filesize</apex:facet>
+                                <apex:outputText value="{!document.bodyLength}b" />
+                            </apex:column>
+                        </apex:dataTable>
+                    </apex:pageBlock>
+                    <div class="filetypes">
+                        * pdf import support is experimental.  Some formatting my be lost.
+                    </div>
+                </apex:form>
+            </div>
+            <div id="message">
+                <apex:pageBlock >
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+            function importing()
+            {
+                document.getElementById("list").style.display = "none";
+                document.getElementById("message").style.display = "block";
+            }
+            </script>
+        </apex:tab>
+        <apex:tab label="Import Chatter File">
+            
+            <style type="text/css">
+                .tableClass
+                {
+                width: 100%;
+                }
+                .odd
+                {
+                background: lightgray;
+                }
+                #message
+                {
+                display: none;
+                }
+            </style>
+            <div id="list">
+                <apex:form >
+                    
+                    <div class="filetypes">
+                        Acceptable filetypes include: .doc, .docx, .txt, .rtf, .pptx, .html, .pdf*
+                    </div>
+                    <apex:pageBlock title="Chatter Files">
+                        <apex:pageBlockButtons >
+                               <apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                            
+                        </apex:pageBlockButtons>
+                        <apex:dataTable value="{!FileList}" var="document" styleClass="tableClass" rowClasses="odd,even">
+                            <apex:column style="vertical-align: middle;">
+                                <apex:commandButton action="{!importFile}" rerender="output" value="Import"
+                                                    onclick="importing();">
+                                    <apex:param name="importID" assignTo="{!importID}" value="{!document.id}"></apex:param>
+                                </apex:commandButton>
+                                <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                            </apex:column>
+                            <apex:column >
+                                &nbsp;
+                            </apex:column>
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Name</apex:facet>
+                                <apex:outputText value="{!document.title}" />
+                            </apex:column>
+                            
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Filesize</apex:facet>
+                                <apex:outputText value="{!document.contentSize}b" />
+                            </apex:column>
+                            
+                            
+                            <apex:column style="vertical-align: middle;">
+                                <apex:facet name="header">Type</apex:facet>
+                                <apex:outputText value="{!document.filetype}" />
+                            </apex:column>
+                        </apex:dataTable>
+                    </apex:pageBlock>
+                    <div class="filetypes">
+                        * pdf import support is experimental.  Some formatting my be lost.
+                    </div>
+                </apex:form>
+            </div>
+            <div id="message">
+                <apex:pageBlock >
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+            function importing()
+            {
+                document.getElementById("list").style.display = "none";
+                document.getElementById("message").style.display = "block";
+            }
+            </script>
+        </apex:tab>
+    
+    
+        <apex:tab label="Import Dropbox File">
+            <script>
+               
+            
+            jQuery(document).ready(function(){
+                
+                TREATY_FB.initialize(jQuery("#treaty_file_browser"), "https://{!servicesServer}", "{!ApiKey}_{!userID}", "{!ApiKey}_{!userID}");
+                console.log(TREATY_FB);
+                TREATY_FB.bindGetListingSuccess(function(e, response, listItem, path){
+                    //console.debug(e, response, listItem, path);
+                });
+                TREATY_FB.bindDownloadConfirm(function(path, downloadFile){
+                    if( confirm("Import file: " + path + " ?") )
+                    {
+                        importing();
+                        downloadFile();
+                    }
+                    else
+                    {
+                        throw "Did not confirm import.";
+                    }
+                });
+                TREATY_FB.bindDownloadFileSuccess(function(e, response, listItem){
+                    //FILE WAS DOWNLOADED!  This is where we redirect to old conversion site to convert and upload to salesforce
+                    //alert("File Downloaded!");
+                    //console.debug(e, response, listItem);
+                    var namearray = response.path.split("/");
+                    var fname = namearray[namearray.length - 1];
+                    var form = jQuery("#dropbox_import_form")
+                    form.children("input[name=name]").val(fname);
+                    form.submit();
+                });
+                
+            });
+            </script>
+            <style type="text/css">
+                .tableClass
+                {
+                    width: 100%;
+                }
+                .odd
+                {
+                    background: lightgray;
+                }
+                #message
+                {
+                    display: none;
+                }
+                
+                
+                
+            </style>
+            <link href="{!URLFOR($Resource.TreatyResources, '/other/filebrowser.css')}" rel="stylesheet" />
+            
+            <form id="dropbox_import_form" method="GET" action="/apex/Treaty_Document_Import_Import">
+                <input type="hidden" name="name" value="" />
+                <input type="hidden" name="id" value="{!userID}"/>
+                <input type="submit" />            
+            </form>
+            <span id="treaty_container">
+                    <div class="filetypes">
+                        Acceptable filetypes include: .doc, .docx, .txt, .rtf, .pptx, .html, .pdf*
+                    </div>
+                <apex:pageBlock title="Dropbox Files">
+                    <apex:pageBlockButtons >
+                        <apex:form style="display: inline">
+                            <apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                        </apex:form>            
+                        <apex:form target="_blank" style="display: inline">
+                            <apex:commandButton immediate="true" action="https://{!servicesServer}/dropbox/unauthorize?s={!ApiKey}_{!userID}" value="Unauthorize"></apex:commandButton>
+                        </apex:form>
+                        
+                    </apex:pageBlockButtons>
+                    
+                    
+                    
+                    <div id="list">
+                        <ul id="treaty_file_browser">
+                        </ul>
+                    </div>
+                </apex:pageBlock>
+                    <div class="filetypes">
+                        * pdf import support is experimental.  Some formatting my be lost.
+                    </div>
+                
+            </span>
+            <div id="message">
+                <apex:pageBlock >
+                    <apex:image value="/img/loading32.gif" />
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+            function importing()
+            {
+                document.getElementById("treaty_container").style.display = "none";
+                document.getElementById("message").style.display = "block";
+            }
+            </script>
+        </apex:tab>
+        
+        
+        
+    
+        <apex:tab label="Import Box File">
+            <script>
+               
+            
+            jQuery(document).ready(function(){
+                
+                TREATY_FB.initialize(jQuery("#treaty_file_browser"), "https://{!servicesServer}", "{!ApiKey}_{!userID}", "{!ApiKey}_{!userID}", 'box');
+                //console.log(TREATY_FB);
+                TREATY_FB.bindGetListingSuccess(function(e, response, listItem, path){
+                    //console.debug(e, response, listItem, path);
+                });
+                TREATY_FB.bindDownloadConfirm(function(path, downloadFile){
+                    if( confirm("Import file: " + path.split("_", 2)[1] + " ?") )
+                    {
+                        importing();
+                        downloadFile();
+                    }
+                    else
+                    {
+                        throw "Did not confirm import.";
+                    }
+                });
+                TREATY_FB.bindDownloadFileSuccess(function(e, response, listItem){
+                    //FILE WAS DOWNLOADED!  This is where we redirect to old conversion site to convert and upload to salesforce
+                    //alert("File Downloaded!");
+                    //console.debug(e, response, listItem);
+                    var path = response.path.split("_", 2);
+                    var namearray = path[1].split("/");
+                    var fname = namearray[namearray.length - 1];
+                    var form = jQuery("#dropbox_import_form")
+                    form.children("input[name=name]").val(fname);
+                    form.submit();
+                });
+                
+            });
+            </script>
+            <style type="text/css">
+                .tableClass
+                {
+                    width: 100%;
+                }
+                .odd
+                {
+                    background: lightgray;
+                }
+                #message
+                {
+                    display: none;
+                }
+                
+                
+                
+            </style>
+            <link href="{!URLFOR($Resource.TreatyResources, '/other/filebrowser.css')}" rel="stylesheet" />
+            
+            <form id="dropbox_import_form" method="GET" action="/apex/Treaty_Document_Import_Import">
+                <input type="hidden" name="name" value="" />
+                <input type="hidden" name="id" value="{!userID}"/>
+                <input type="submit" />            
+            </form>
+            <span id="treaty_container">
+                    <div class="filetypes">
+                        Acceptable filetypes include: .doc, .docx, .txt, .rtf, .pptx, .html, .pdf*
+                    </div>
+                <apex:pageBlock title="Dropbox Files">
+                    <apex:pageBlockButtons >
+                        <apex:form style="display: inline">
+                            <apex:commandButton immediate="true" action="{!URLFOR($Action.Treaty_Document__c.Tab, $ObjectType.Treaty_Document__c)}" value="Cancel"></apex:commandButton>
+                        </apex:form>            
+                        <apex:form target="_blank" style="display: inline">
+                            <apex:commandButton immediate="true" action="https://{!servicesServer}/box/unauthorize?s={!ApiKey}_{!userID}" value="Unauthorize"></apex:commandButton>
+                        </apex:form>
+                        
+                    </apex:pageBlockButtons>
+                    
+                    
+                    
+                    <div id="list">
+                        <ul id="treaty_file_browser">
+                        </ul>
+                    </div>
+                </apex:pageBlock>
+                    <div class="filetypes">
+                        * pdf import support is experimental.  Some formatting my be lost.
+                    </div>
+                
+            </span>
+            <div id="message">
+                <apex:pageBlock >
+                    <apex:image value="/img/loading32.gif" />
+                    <p>
+                        <b>Do not close your browser.</b> Please wait while we import your document.
+                    </p>
+                    <p>
+                        Your browser may refresh several times during the import process. This is normal.
+                    </p>
+                    <p>
+                        You will be redirected to the new Treaty Document's details page upon completion.
+                    </p>
+                    
+                </apex:pageBlock>
+                
+            </div>
+            <script type="text/javascript">
+            function importing()
+            {
+                document.getElementById("treaty_container").style.display = "none";
+                document.getElementById("message").style.display = "block";
+            }
+            </script>
+        </apex:tab>
+    </apex:tabPanel>
+    
+    
+</apex:page>

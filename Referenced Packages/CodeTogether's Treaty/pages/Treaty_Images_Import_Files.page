@@ -1,0 +1,33 @@
+<apex:page title="Import Chatter File into Treaty Images" tabstyle="codetogether__Treaty_Image__c" controller="codetogether.Treaty_Import_Image_Controller" >
+    
+    <apex:sectionHeader title="Treaty Images" subtitle="Import Chatter File">
+    <p>
+        <a href="/apex/Treaty_Images_New">Cancel Import</a>
+    </p>
+    </apex:sectionHeader>
+    <apex:pageBlock >
+        <apex:form >
+            <apex:dataTable value="{!FileList}" var="file" styleClass="tableClass" rowClasses="odd,even">
+                <apex:facet name="header">Chatter Files</apex:facet>
+                <apex:column style="vertical-align: middle;">
+                    <apex:commandButton action="{!importFile}" rerender="hiddenBlock" value="Import">
+                        <apex:param name="importID" assignTo="{!importID}" value="{!file.id}"></apex:param>
+                    </apex:commandButton>
+                    <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                </apex:column>
+                <apex:column style="vertical-align: middle;">
+                    <apex:facet name="header">File</apex:facet>
+                    <apex:outputField value="{!file.ContentDocumentId}" />
+                </apex:column>
+                <apex:column style="vertical-align: middle;">
+                    <apex:facet name="header">Type</apex:facet>
+                    <apex:outputField value="{!file.FileType}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Preview</apex:facet>
+                    <apex:image style="max-width: 100px; max-height: 100px; " url="/sfc/servlet.shepherd/version/renditionDownload?rendition=THUMB720BY480&versionId={!file.id}"/>
+                </apex:column>
+            </apex:dataTable>
+        </apex:form>
+    </apex:pageBlock>
+</apex:page>

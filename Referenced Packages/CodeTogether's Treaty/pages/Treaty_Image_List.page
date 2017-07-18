@@ -1,0 +1,5 @@
+<apex:page controller="codetogether.Treaty_Image_List_Controller" showHeader="false" sidebar="false" contentType="text/javascript">
+    [
+    {!ImageList}
+    ]
+</apex:page>

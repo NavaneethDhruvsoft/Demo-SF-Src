@@ -1,0 +1,14 @@
+<apex:page controller="CTMR_MapController">
+           
+            <apex:dataTable value="{!carColorsMap}" var="model">
+                <apex:column headerValue="Account">
+                    <!-- Models -->
+                    <apex:outputText value="{!model}"/>
+                </apex:column>
+                <apex:column headerValue="Contacts">
+                    <!-- Colors -->
+                    <apex:outputText value="{!carColorsMap[model] }"/>
+                </apex:column>
+            </apex:dataTable>
+        
+    </apex:page>

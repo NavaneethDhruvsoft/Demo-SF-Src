@@ -1,0 +1,25 @@
+<apex:page controller="ImportCtrlr">
+<apex:form >
+ <apex:pageblock >
+  <apex:pageBlockSection columns="2">
+   <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Select Object"/>
+   </apex:pageBlockSectionItem>  
+   <apex:pageBlockSectionItem >
+    <apex:selectList size="1" value="{!obj}" >
+     <apex:selectOptions value="{!objs}"/>
+    </apex:selectList>
+   </apex:pageBlockSectionItem>   
+   <apex:pageBlockSectionItem >
+    <apex:outputLabel value="Select File"/>
+   </apex:pageBlockSectionItem>  
+   <apex:pageBlockSectionItem >
+    <apex:inputFile value="{!fileContent}" filename="{!fileName}"/>
+   </apex:pageBlockSectionItem>      
+  </apex:pageBlockSection>
+  <apex:pageblockButtons >
+   <apex:commandButton value="Import" action="{!importData}"/>
+  </apex:pageblockButtons>
+ </apex:pageblock> 
+</apex:form>
+</apex:page>

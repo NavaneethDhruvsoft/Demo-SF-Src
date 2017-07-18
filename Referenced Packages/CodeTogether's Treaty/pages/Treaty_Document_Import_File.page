@@ -1,0 +1,73 @@
+<apex:page title="Import Chatter File into Treaty" tabstyle="codetogether__Treaty_Document__c" controller="codetogether.Treaty_Import_Document_Controller" action="{!importFile}">
+    <apex:sectionHeader help="Treaty_Help_Import_Document" title="Treaty Document" subtitle="Import Chatter File">
+    </apex:sectionHeader>
+    
+    <apex:outputText value="{!output}" id="output"></apex:outputText>
+    <style type="text/css">
+        .tableClass
+        {
+        width: 100%;
+        }
+        .odd
+        {
+        background: lightgray;
+        }
+        #message
+        {
+        display: none;
+        }
+    </style>
+    <div id="list">
+        <apex:form >
+            
+            <apex:pageBlock title="Chatter Files">
+                <apex:pageBlockButtons >
+                    <apex:commandButton value="Cancel Import" action="/apex/Treaty_Document_New" />
+                </apex:pageBlockButtons>
+                <apex:dataTable value="{!FileList}" var="document" styleClass="tableClass" rowClasses="odd,even">
+                    <apex:column style="vertical-align: middle;">
+                        <apex:commandButton action="{!importFile}" rerender="output" value="Import"
+                                            onclick="importing();">
+                            <apex:param name="importID" assignTo="{!importID}" value="{!document.id}"></apex:param>
+                        </apex:commandButton>
+                        <apex:pageBlock id="hiddenBlock"  rendered="false"></apex:pageBlock>
+                    </apex:column>
+                    <apex:column >
+                        &nbsp;
+                    </apex:column>
+                    <apex:column style="vertical-align: middle;">
+                        <apex:facet name="header">Name</apex:facet>
+                        <apex:outputText value="{!document.title}.{!document.fileType}" />
+                    </apex:column>
+                    
+                    <apex:column style="vertical-align: middle;">
+                        <apex:facet name="header">Filesize</apex:facet>
+                        <apex:outputText value="{!document.contentSize}b" />
+                    </apex:column>
+                </apex:dataTable>
+            </apex:pageBlock>
+        </apex:form>
+    </div>
+    <div id="message">
+        <apex:pageBlock >
+            <p>
+                  <b>Do not close your browser.</b> Please wait while we import your document.
+            </p>
+            <p>
+                Your browser may refresh several times during the import process. This is normal.
+            </p>
+            <p>
+                You will be redirected to the new Treaty Document's details page upon completion.
+            </p>
+            
+        </apex:pageBlock>
+        
+    </div>
+    <script type="text/javascript">
+    function importing()
+    {
+        document.getElementById("list").style.display = "none";
+        document.getElementById("message").style.display = "block";
+    }
+    </script>
+</apex:page>

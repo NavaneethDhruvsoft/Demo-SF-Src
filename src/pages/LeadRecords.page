@@ -1,0 +1,28 @@
+<apex:page standardController="lead" extensions="LeadRecFetch" sidebar="false">
+<apex:form >
+<apex:selectList size="1" value="{!size}">
+    <apex:selectOption itemvalue="10"></apex:selectOption>
+    <apex:selectOption itemvalue="20"></apex:selectOption>
+    <apex:selectOption itemvalue="30"></apex:selectOption>
+</apex:selectList>
+<apex:selectRadio value="{!type}">
+
+    <apex:selectOption itemLabel="Ascending" itemValue="ASC"></apex:selectOption>
+    <apex:selectOption itemLabel="Descending" itemValue="DESC"></apex:selectOption>
+</apex:selectRadio>
+<apex:commandButton action="{!go}" id="sk" value="GO" reRender="xxx"/>
+
+<apex:pageBlock >
+
+<apex:pageBlockTable value="{!lelist}" var="le" id="xxx">
+<apex:variable var="ind" value="{!-1}"/>
+<apex:column headerValue="S.NO">
+        <apex:variable var="ind" value="{! ind +1}"/> {!ind}
+    </apex:column>
+    <apex:column headerValue="Name">
+        <apex:outputField value="{!le.name}"/>
+    </apex:column>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:form>  
+</apex:page>

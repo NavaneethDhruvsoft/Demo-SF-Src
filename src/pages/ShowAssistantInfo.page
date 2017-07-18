@@ -1,0 +1,6 @@
+<apex:page standardController="contact" sidebar="false" >
+      <apex:outputField value="{!contact.AssistantName}"/>
+      <apex:outputField value="{!contact.AssistantPhone}"/>
+      <a href="tel:">{!contact.AssistantPhone}</a>
+      
+</apex:page>

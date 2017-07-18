@@ -1,0 +1,18 @@
+<apex:page standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Export_Document_Controller" action="{!exportdropboxaction}">
+    <apex:sectionHeader title="Treaty Document Export" subtitle="Success" />
+    
+    <style type='text/css'>
+        .filetypes
+        {
+        padding: 10px;
+        }
+    </style>
+    
+    
+    <apex:pageBlock >
+        
+        Your document was successfully uploaded to as "{!output}".
+        <br />
+        <a href="/apex/Treaty_Document_View?id={!treatyID}">Return to Treaty Document</a>
+    </apex:pageBlock>
+</apex:page>

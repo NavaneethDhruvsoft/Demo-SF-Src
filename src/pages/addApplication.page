@@ -1,0 +1,10 @@
+<apex:page standardController="Application__c" extensions="OpenPosList" sidebar="false" recordSetVar="{!app}" > 
+<apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockSection title="Application">
+            
+                Application Registered Succesfully.........!!!
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

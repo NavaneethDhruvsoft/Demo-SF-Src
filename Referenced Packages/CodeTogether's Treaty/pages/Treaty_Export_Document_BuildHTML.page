@@ -1,0 +1,15 @@
+<apex:page standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Export_Document_Controller" action="{!buildHTMLaction}">
+    <apex:sectionHeader title="Export Error"></apex:sectionHeader>
+    <apex:pageBlock >
+        <p>
+            There was a problem.  Your document could not be uploaded for conversion.  Try again or contact an administrator.
+        </p>
+        <apex:form >
+            <apex:commandLink action="{!cancel}">Return to Treaty Document</apex:commandLink>
+        </apex:form>
+        <p>
+            
+            <apex:outputText value="{!output}"></apex:outputText>
+        </p>
+    </apex:pageBlock>
+</apex:page>

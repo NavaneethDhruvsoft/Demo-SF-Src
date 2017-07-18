@@ -1,0 +1,69 @@
+<apex:page standardController="Position__c" extensions="OpenPosList" sidebar="false" recordSetVar="x"> 
+    <APEX:FORM >
+     <apex:pageBlock >
+         <apex:pageBlockSection title="Filter Criteria" columns="1" >
+         <apex:inputField value="{!position.Account__c}"/> 
+         <apex:outputPanel >
+             <apex:inputText value="{!edu}" html-placeholder="eeducation" />
+             <apex:inputText value="{!skills}" html-placeholder="skills" />
+             <apex:inputText value="{!respon}" html-placeholder="responsibilities" />
+             <apex:inputText value="{!minpay}" html-placeholder="Min Pay" />
+            
+           <!--  <apex:selectList value="{!selectedlocationId }" multiselect="false" size="1">
+                 <apex:selectOptions value="{!locations}" />
+             </apex:selectList>  -->
+             <apex:inputText value="{!city}" html-placeholder="city" />
+             <apex:commandButton action="{!go}" id="sk" value="Search" reRender="op"/> 
+             
+         </apex:outputPanel> <br/>
+         </apex:pageBlockSection>
+         <div id="div1">
+         <apex:pageBlockSection title="OPEN POSITIONS" id="op">
+         
+            <apex:pageBlockTable value="{!search}" var="pos" title="OPEN POSITIONS" width="1000"> 
+                
+                <apex:column headerValue="Name" style="font-family:itallic;text-align:left" width="700">
+                 <!--   <apex:outputField value="{!pos.name}" style="color:blue" /> -->
+                    
+                        <h1 style="color:blue;font-family:courier;font-size:20px">the position "{!pos.name}" status is "{!pos.Status__c}"</h1> <br/>
+                        
+                 <button> <a  href="https://ap2.salesforce.com/{!pos.id}" style="color:red;font-family:Arial;font-size:15px">Click here To know Details</a> </button>
+                 
+                  <apex:commandlink action="{!Apply}" id="sk" value="Apply">
+                       <apex:param value="{!pos.id}" name="posid" assignTo="{!posid}"/>
+                  </apex:commandlink>  
+                </apex:column>
+            <!--<apex:column headerValue="Id">
+                    <apex:outputField value="{!pos.id}"/>
+                </apex:column>    
+                <apex:column headerValue="status">
+                    <apex:outputField value="{!pos.Status__c}" />
+                </apex:column>
+                <apex:column headerValue="open_date__c ">
+                    <apex:outputField value="{!pos.open_date__c }"/>
+                </apex:column>
+                <apex:column headerValue="close_date__c  ">
+                    <apex:outputField value="{!pos.close_date__c  }"/>
+                </apex:column> 
+                <apex:column headerValue="Skills_Required__c"  width="1500">
+                    <apex:outputField value="{!pos.Skills_Required__c}"/>
+                </apex:column>
+                <apex:column headerValue="Responsibilities__c  ">
+                    <apex:outputField value="{!pos.Responsibilities__c  }"/>
+                </apex:column> 
+                <apex:column headerValue="Educational_Requirements__c">
+                    <apex:outputField value="{!pos.Educational_Requirements__c}"/>
+                </apex:column>
+                <apex:column headerValue="location__c ">
+                    <apex:outputField value="{!pos.location__c }"/>
+                </apex:column>
+                <apex:column headerValue="min_pay__c ">
+                    <apex:outputField value="{!pos.min_pay__c }"/>
+                </apex:column> 
+                -->
+            </apex:pageBlockTable> 
+         </apex:pageBlockSection>
+       </div>  
+     </apex:pageBlock>
+    </APEX:FORM>
+</apex:page>

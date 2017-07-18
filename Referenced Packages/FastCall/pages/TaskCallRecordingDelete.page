@@ -1,0 +1,36 @@
+<apex:page standardController="Task"
+		   extensions="FastCall.TaskCallRecordingDeleteController"
+		   cache="false">
+	
+	<apex:stylesheet value="{!style}" />
+		   
+	<apex:form >
+   		<apex:actionFunction action="{!deleteTwillioRecordingsOnTargetTask}" name="deleteRecordings" rerender="notificationPanel" />
+	</apex:form>
+	
+	<script>
+		var hasRecordings = {!hasRecordings};
+		if (hasRecordings) { 
+			if (confirm('You are about to delete twillio call recordings associated to this task. \n Are you sure ?')) {
+            	deleteRecordings();
+        	} else {
+            	history.go(-1);
+        	}
+        } else {
+        	alert('This task does not have recordings.');
+        	history.go(-1);
+        }	
+	</script>		   
+	<apex:outputPanel id="notificationPanel" layout="none">
+	<apex:outputPanel rendered="{!OR(deletionSuccessful, errorOcurred)}">
+		<apex:outputPanel layout="block">
+             <fieldset class="alert alert-{!taskCallRecordingDeletionMessage.messageType}">
+             	<apex:outputPanel styleClass="icon-{!taskCallRecordingDeletionMessage.messageType}-sign" />
+                <apex:outputLabel styleClass="settings first last" value="{!taskCallRecordingDeletionMessage.text}" />
+                <br />
+                <a href="/{!targetTask.Id}">Back to task</a>
+             </fieldset>
+        </apex:outputPanel>
+	</apex:outputPanel>
+	</apex:outputPanel>
+</apex:page>

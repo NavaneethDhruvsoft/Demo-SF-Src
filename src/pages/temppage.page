@@ -1,0 +1,8 @@
+<apex:page sidebar="false" showHeader="false" >
+      <apex:composition template="vftemp">
+      <apex:define name="body">
+      <h1>this is the main page using template</h1>
+      </apex:define>
+      
+      </apex:composition>
+</apex:page>

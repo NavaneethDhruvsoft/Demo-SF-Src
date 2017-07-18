@@ -1,0 +1,3 @@
+<apex:page contentType="text/plain" action="{!saveDocument}" standardStylesheets="false" showHeader="false" sidebar="false" controller="codetogether.Treaty_Save_Document_Controller">
+Saved
+</apex:page>

@@ -1,0 +1,344 @@
+<apex:page controller="DragAndDropFileController" sidebar="false" showHeader="false" standardStylesheets="true">
+<apex:PageMessages ></apex:PageMessages>
+     <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"/>
+        <script>
+                // change to false to block multi file upload
+                var sfdcHostName =window.location.host.split('.')[1];
+                var SUPPORT_MULTI_FILE = true;
+                var file;
+        </script>    
+        <style>
+        #filedrag{
+            padding: 1em 0;
+            margin: 1em 0;
+            background-color: #FAFAFA;
+            border: 1px dashed #B3B3B3;
+            border-radius: 7px;
+            cursor: default;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+            vertical-align: middle;
+            resize:both;
+            overflow:auto;
+        }
+        #filedrag.hover{
+            color: #47A5E8;
+            border-color: #909293;
+            border-style: solid;
+            box-shadow: inset 0px 0px 6px #888;
+        }
+        #fileslist{
+            overflow: auto;
+            font-size: 14px;
+            font-weight: normal;
+            line-height: 20px;
+        }
+        .DDFUContainer{
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+             
+        }
+        .uploadTxt{
+            padding: 10px;
+            vertical-align: top;
+        }
+        .uploadImgCont, .uploadTxt {
+            display: inline-block;
+        }
+        
+        h1 {
+            position: relative;
+            font-size: 14px;
+            z-index: 1;
+            overflow: hidden;
+            text-align: center;
+            font-weight: normal;
+            color: #D0D0D0;
+            display: block;
+        }
+        h1:before, h1:after {
+            position: absolute;
+            top: 51%;
+            overflow: hidden;
+            width: 50%;
+            height: 1px;
+            content: '\a0';
+            background-color: #ccc;
+        }
+        
+        h1:before {
+            margin-left: -50%;
+            text-align: right;
+        }
+        .browseFiles{
+            padding: 10px;
+            text-align: center;
+        }
+        </style>
+        <div class="DDFUContainer">
+            <form id="upload" enctype="multipart/form-data">
+                <div class="browseFiles">
+                    <input type="file" multiple="true" id="filesInput" name="file" /> 
+                    <input type="button" value="Upload" onclick="FileSelectHandlerFrmInput()" />
+                </div>
+                <h1> &nbsp;or&nbsp; </h1>
+                <div id="filedrag">
+                    <div id="idle">
+                        <div class="uploadImgCont">
+                            <img src="/static/184/img/chatterfiles/uploadWhiteArrow12.png" alt="" class="uploadArrow" title=""/>
+                        </div>
+                        <div class="uploadTxt">Upload to Salesforce</div>
+                    </div>
+                    
+                    <div id="loading">
+                        <apex:image value="/img/loading.gif"  width="18" /> Uploading...
+                    </div>
+                    <div id="fileslist"></div>
+                </div>
+            </form>
+        </div>
+        <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+        <script>
+            try{
+            
+            j$ = jQuery.noConflict();
+            
+            // prepare the form when the DOM is ready 
+            j$(document).ready(function() { 
+                 // call initialization file
+                 console.log('I am here 110');
+                if (window.File && window.FileList && window.FileReader) {
+                    Init();
+                }
+            }); 
+    
+            // initialize
+            function Init() {
+                var filedrag = j$("#filedrag");
+                console.log('I am here 118');
+              
+                
+                
+                j$('#loading').hide();
+                j$('#idle').show();
+            
+                filedrag.bind("dragover", FileDragHover);
+                filedrag.bind("dragleave", FileDragHover);
+                filedrag.bind("drop", FileSelectHandler);
+                filedrag.css("display","block");
+            }
+            
+            //used to show the user informations about the upload
+            var filesToUpload = new Array();
+            
+            // file drag hover
+            function FileDragHover(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.target.className = (e.type == "dragover" ? "hover" : "");
+            }
+            //converting base64 to blob
+            function dataURItoBlob(dataURI, callback) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    // write the ArrayBuffer to a blob, and you're done
+    var bb = new Blob([ab]);
+    return bb;
+}
+            
+            // file selection in case of drag & drop
+            function FileSelectHandler(e) {
+                filesToUpload = new Array();
+                //LOCK THE DRAG/DROP
+                filedrag = j$("#filedrag");
+                filedrag.unbind("dragover",FileDragHover);
+                filedrag.unbind("dragleave",FileDragHover);
+                filedrag.unbind("drop",FileSelectHandler);
+                    
+                // cancel event and hover styling
+                FileDragHover(e);
+                
+                console.log(e.originalEvent.dataTransfer);
+                if(e.originalEvent.dataTransfer){
+                var datalist = e.originalEvent.dataTransfer.items;
+               
+                 for (var i=0; i<datalist.length; i++) {
+                        // webkitGetAsEntry is where the magic happens
+                        var entry= datalist[i].webkitGetAsEntry();;
+                        if (entry) {
+                          traverseFileTree(entry);
+                          
+                        }
+                      }
+                      checkIfCompleted(); 
+                      }
+                function traverseFileTree(entry, path) {
+                      path = path || "";
+                      if (entry.isFile) {
+                        
+                         entry.file(function(file) {
+                          console.log("File:", path+file.name);
+                          ParseFile(file);
+                          UploadFile(file);
+                         
+                            });
+                         
+                        j$('#loading').show();
+                        j$('#idle').hide();
+                       
+                      } else if (entry.isDirectory) {
+                        
+                        var dirReader = entry.createReader();
+                        dirReader.readEntries(function(entries) {
+                          for (var i=0; i<entries.length; i++) {
+                            traverseFileTree(entries[i], path + entry.name + "/");
+                          }
+                        });
+                      }
+                    }                
+            }
+            
+            // file selection in case of input type file
+            function FileSelectHandlerFrmInput() {
+                var inputFiles = document.getElementById('filesInput').files;
+                filesToUpload = new Array();
+                for (i = 0; i < inputFiles.length; i++) {
+                    f = inputFiles[i];
+                    ParseFile(f);
+                    UploadFile(f);
+                    j$('#loading').show();
+                    j$('#idle').hide();
+                    
+                    //lock multi file uplod
+                    if(SUPPORT_MULTI_FILE == false) break;
+                }                
+            }
+            
+            //utility object to track the uploading of all files
+            function uploadingFile(file, status){
+                this.file = file;
+                this.status = status;
+            }
+            
+            function ParseFile(file) {
+                console.log(file.name);
+                filesToUpload.push(new uploadingFile(file,'Uploading...'));
+            }
+            
+            function checkIfCompleted(){
+                //check if all files have been unploaded
+                var output = j$('#fileslist');
+                var allUploaded = true;
+                output.html('');
+                for(var i = 0; i < filesToUpload.length; i++)
+                {
+                    output.html(output.html()+'<b>'+filesToUpload[i].file.name+'</b> ['+(filesToUpload[i].file.size/1024).toFixed(1)+' KB]'+' : '+filesToUpload[i].status+'<br/>');
+                    if(filesToUpload[i].status == 'Uploading...') allUploaded &= false;
+                }
+                if(allUploaded) Init();
+            }
+        
+            // refresh chatter feeds
+            function refreshFeed() {
+                Sfdc.canvas.publisher.publish({name : 'publisher.refresh',  payload : {feed: true}});
+            }
+            
+            // upload JPEG files
+            function UploadFile(file) {
+            
+                var reader = new FileReader();
+                
+                // Closure to capture the file information.
+                reader.onload = function(e) {     
+                    //http://stackoverflow.com/questions/7431365/filereader-readasbinarystring-to-upload-files
+                    <!--Visualforce.remoting.timeout = 120000;-->
+                   /*var bodytmp = e.target.result.split(',')[1];
+                    var bodytmp = e.target.result.split(',');
+                    alert('bodytmp'+bodytmp);
+                    var bodytmp1 = dataURItoBlob(bodytmp, callback);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.DragAndDropFileController.saveFile}',
+                        file.name,bodytmp ,'{!myId}',
+                        function(result, event){
+                        alert(event);
+                            var fup = null;
+                            for(var i = 0; i <filesToUpload.length ; i++)
+                           {
+                                if(file === filesToUpload[i].file)
+                                {
+                                    fup = filesToUpload[i];
+                                }
+                            }
+                            
+                            if (event.status) {
+                                if(result!=null)
+                                    fup.status = 'Error occurred. Try later. ['+result+']';
+                                else
+                                    fup.status = 'Upload completed.';
+                            } else if (event.type === 'exception') {
+                               fup.status = 'Error occurred. Try later. ['+event.message+']';
+                            } else {
+                                fup.status = 'Error occurred. Try later. ['+result+' '+event.message+']';
+                            }
+                            checkIfCompleted();
+                            refreshFeed();
+                        }, 
+                        {escape: true});*/
+                        
+                            // for(var i = 0; i <filesToUpload.length ; i++)
+                           //{
+                               
+                            var xhr = new XMLHttpRequest();
+                            var sfdcurl = 'https://'+sfdcHostName+'.salesforce.com/services/apexrest/DragAndDrop/v1?FileName='+encodeURIComponent(file.name)+'&cType='+encodeURIComponent(file.type)+'&parId={!myId }' ;
+                            xhr.open('POST','/services/proxy' );
+                            //xhr.setRequestHeader("Content-type",'multipart/form-data');
+                              //xhr.setRequestHeader("Content-type",''); 
+                              xhr.setRequestHeader("Authorization","Bearer {!$Api.Session_ID}");
+                              xhr.setRequestHeader('SalesforceProxy-Endpoint', sfdcurl);
+                              xhr.setRequestHeader('X-User-Agent', 'DragAndDropAPI v1.0');
+                              xhr.onreadystatechange=function()
+                              {
+                                    if (xhr.readyState==4 && xhr.status != 200)
+                                    {
+                                        if(xhr.responseText)
+                                            alert(xhr.responseText);
+                                        else
+                                            alert('Some error occurred while uploading file');
+                                            
+                                         console.log(xhr);
+                                    }
+                               }
+                       
+                                   //fup=filesToUpload[i];
+                                  xhr.send(file);  
+                                
+                           // }
+                        
+                     //xhr.send(filesToUpload[i]);
+                     checkIfCompleted();
+                            refreshFeed();
+                };
+               
+                 reader.readAsDataURL(file);
+            }
+            }
+            catch(e)
+            {
+                alert(e)
+            }
+        </script>  
+</apex:page>

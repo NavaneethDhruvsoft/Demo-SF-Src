@@ -1,0 +1,63 @@
+<apex:page sidebar="False" controller="Display">
+   <apex:form >
+       <apex:pageBlock >
+           <apex:pageBlockButtons location="bottom">
+                   <apex:commandButton action="{!saverecords}" value="Update Contact" reRender="abc"/>
+               </apex:pageBlockButtons>
+         <apex:outputPanel id="abc">
+           <apex:pageBlockSection title="Account With Contacts" id="op" rendered="{!ac.size>0}">
+               <apex:pageBlockTable value="{!ac}" var="a">
+                   <apex:variable value="{!-1}" var="i"/>
+                   <apex:column >
+                       <apex:variable value="{!i+1}" var="i"/> {!i}
+                   </apex:column>
+                   <apex:column headerValue="Account name">
+                   
+                       <apex:outputField value="{!a.Name}"/>
+                       </apex:column>
+                       <apex:column >
+                       <apex:pageBlockTable value="{!a.contacts}" var="ss">
+                           <apex:column headerValue="Name">
+                               <apex:outputField value="{!ss.Name}"/>
+                           </apex:column>
+                           <apex:column headerValue="Email">
+                               <apex:outputField value="{!ss.Email}"/>
+                           </apex:column>
+                           <apex:column headerValue="Phone">
+                               <apex:outputField value="{!ss.Phone}"/>
+                           </apex:column>
+
+                       </apex:pageBlockTable>
+                   </apex:column>
+                   
+               </apex:pageBlockTable>
+           </apex:pageBlockSection>
+       
+           <apex:pageBlockSection title="Account Without Contact" id="opp">
+               
+               <apex:pageBlockTable value="{!cnlist}" var="c" rendered="{!cnlist.size>0}">
+                   <apex:variable value="{!-1}" var="j"/>
+               <apex:column headerValue="S.No">
+                   <apex:variable value="{!j+1}" var="j"/>{!j}
+               </apex:column>
+                   <apex:column headerValue="Select">
+                       <apex:inputCheckbox value="{!c.checkme}"/>
+                   </apex:column>
+                   <apex:column headerValue="Name">
+                       <apex:outputField value="{!c.ct.Name}"/>
+                   </apex:column>
+                    <apex:column headerValue="Email">
+                       <apex:outputField value="{!c.ct.Email}"/>
+                   </apex:column>
+                    <apex:column headerValue="Account">
+                       <apex:inputField value="{!c.ct.Accountid}"/>
+                   </apex:column>
+                   
+               </apex:pageBlockTable>
+               
+
+               </apex:pageBlockSection>
+             </apex:outputPanel>        
+       </apex:pageBlock>
+   </apex:form>
+</apex:page>

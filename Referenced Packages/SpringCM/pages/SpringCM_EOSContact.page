@@ -1,0 +1,4 @@
+<apex:page standardController="Contact" >
+	<c:SpringCM_EOSGrid objectType="Contact" objectId="{!Contact.Id}" /> 
+	<!--  <apex:iframe id="springFrame"  src="/apex/SpringCM_EOSGrid?id={!Contact.Id}&type=Contact" /> -->
+</apex:page>

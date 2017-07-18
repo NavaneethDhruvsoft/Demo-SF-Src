@@ -1,0 +1,18 @@
+<apex:page action="{!checkapi}" extensions="codetogether.Treaty_Image_Controller_Extension" standardController="codetogether__Treaty_Image__c" title="New Treaty Images">
+    <apex:SectionHeader title="New Treaty Image"></apex:SectionHeader>
+    
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!cancel}" value="Cancel" />
+            </apex:pageBlockButtons>
+            
+            <a href="/apex/Treaty_Images_Import_Documents">Import from Documents</a>
+            <br />
+            <br />
+            <a href="/apex/Treaty_Images_Import_Files">Import from Chatter Files</a>
+            
+        </apex:pageBlock>
+        
+    </apex:form>
+</apex:page>

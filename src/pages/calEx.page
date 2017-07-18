@@ -1,0 +1,150 @@
+<apex:page controller="CalendarExample_Controller" action="{!pageLoad}" sidebar="false">
+    <apex:variable var="i" value="{!0}"/>
+    <link href="{!$Resource.fullCalendarCSS}" rel="stylesheet" />
+    <link href="{!$Resource.fullCalendarPrintCSS}" rel="stylesheet" media="print" />
+    ﻿<apex:includeScript value="{!$Resource.moment_min_js}"  />﻿  
+     
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="{!$Resource.fullCalendarMinJS}"></script>
+     
+    <script>
+        //We need to wrap everything in a doc.ready function so that the code fires after the DOM is loaded
+        $(document).ready(function() {   
+            //Call the fullCallendar method. You can replace the '#calendar' with the ID of the dom element where you want the calendar to go. 
+            $('#calendar').fullCalendar({
+                
+               
+                header: {
+                    center: 'prev,title,next today',
+                    left:'',
+                    right: 'month,agendaWeek,agendaDay,listMonth'
+                },
+                editable: true,
+               // weekends: true,
+               // durationEditable: true,
+                
+                dayClick: function(date, jsEvent, view) 
+                {
+
+                    alert('Clicked on: ' + date.format());
+                   // alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                    //alert('Current view: ' + view.name);
+                    alert('Enter new event......!!!');
+                 
+                     // change the day's background color just for fun
+                    // $(this).css('background-color', 'gray');
+
+                },
+             //   eventRender: function (event, element) {
+             //   if (event.id!= null) {
+             //       event.eventColor =  "#B22222";
+             //       event.eventBackColor = "#B22222";                       
+            //    }},
+                events:
+                [
+                    //At run time, this APEX Repeat will reneder the array elements for the events array
+                    <apex:repeat value="{!events}" var="e">
+                        {
+                            // <apex:variable var="i" value="{!i+1}"/>
+                            title: "{!e.title}",
+                            start: '{!e.startString}',
+                            end: '{!e.endString}',
+                            url: '{!e.url}',
+                            allDay: {!e.allDay},
+                            className: '{!e.className}',
+                                                       
+                        },
+                       
+                    </apex:repeat>
+                ],
+              eventDragStop : function( event, jsEvent, ui, view )
+               {
+                   alert('Dragged Event');
+                   alert('Event start date ::::::'+event.start.format());
+                   alert('Event end date ::::::'+event.end.format());
+               },
+              
+           //   eventResizeStart : function( event, jsEvent, ui, view )
+            //   {
+           //        alert('Resized Event');
+            //       alert('Event start date ::::::'+event.start.format());
+            //       alert('Event end date ::::::'+event.end.format());
+           //    },
+              
+               eventResize: function(event, delta, revertFunc) 
+               {
+                    alert(event.title + " end is now " + event.end.format());
+                    alert('Delta...'+delta.end);
+                    if (!confirm("is this okay?"))
+                     {
+                        revertFunc();
+                     }
+                     else
+                     {
+                                 alert('Invoked..................');
+                                 var cntctName = event.title;
+                                 var enddate = event.end.format();
+                                 Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.CalendarExample_Controller.updateContact}',
+                                    cntctName,event.url,enddate, 
+                                    function(result, event1){
+                                        if (event1.status) {
+                                            alert('updated......!!!!');
+                                        } else if (event1.type === 'exception') {
+                                            alert('Exception....................'+event1.message);
+                                        } else {
+                                            alert('Errrorrrr.................');
+                                        }
+                                    }, 
+                                    {escape: true}
+                                );
+                     }
+                },  
+                 
+                
+                
+            });
+             
+        });
+        
+        
+           
+    </script>
+     
+    <!--some styling. Modify this to fit your needs-->
+    <style>
+        #cal-options {float:left;}
+        #cal-legend { float:right;}
+        #cal-legend ul {margin:0;padding:0;list-style:none;}
+        #cal-legend ul li {margin:0;padding:5px;float:left;}
+        #cal-legend ul li span {display:block; height:16px; width:16px; margin-right:4px; float:left; border-radius:4px;}
+        #calendar {margin-top:20px;}
+        #calendar a:hover {color:#fff !important;}
+         
+        .fc-event-inner {padding:3px;}
+        .event-birthday {background:{!colors[i+10]};border-color:#cc9936;}
+        .event-campaign {background:#cc9933;border-color:#cc9933;}
+        .event-personal {background:#1797c0;border-color:#1797c0;}
+    </style>
+     
+    <apex:sectionHeader title="My Calendar Example"/>
+     
+    <apex:outputPanel id="calPanel">
+        <apex:form >
+            <div id="cal-options">
+                <apex:commandButton value="{!IF(includeMyEvents,'Hide My Events','Show My Events')}" action="{!toggleMyEvents}"/>
+            </div>
+            <div id="cal-legend">
+                <ul>
+                    <li><span class="event-birthday"></span>Contact's Birthdays</li>
+                    <li><span class="event-campaign"></span>Campaigns</li>
+                    <li style="{!IF(includeMyEvents,'','display:none')}"><span class="event-personal"></span>My Events</li>
+                </ul>
+                <div style="clear:both;"><!--fix floats--></div>
+            </div>
+            <div style="clear:both;"><!--fix floats--></div>
+            <div id="calendar"></div>
+        </apex:form>
+    </apex:outputPanel>
+</apex:page>

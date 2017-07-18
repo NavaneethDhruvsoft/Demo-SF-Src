@@ -1,0 +1,33 @@
+<aura:component implements="force:appHostable"
+                controller="FastCall.Settings">
+    
+    <ltng:require styles="{!join(',', $Resource.FastCall__Lightning_Static + '/assets/styles/salesforce-lightning-design-system-vf.min.css', $Resource.FastCall__C2C + '/css/settings-styles.css')}"/>
+    
+    <ltng:require scripts="{!$Resource.FastCall__C2C + '/js/fc-settings-app.js'}" afterScriptsLoaded="{!c.initializeNgView}"/>
+    
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div id="fc-settings-container" aura:id="fc-settings-container" class="slds fc-main-content">   
+        
+        <!-- PRELOADER -->
+        <div class="fc-app-preloader">
+            <div class="fc-preloader-back back-b"></div>
+            <div class="fc-preloader-back back-a"></div>
+            <div class="fc-preloader-logo"></div>
+        </div>
+        
+        <!-- GRID -->
+        <div class="slds-grid slds-wrap fc-flex-content">
+            <!-- MENU -->
+            <div id="fc-tree-menu-container" class="fc-set-height-col slds-col slds-size--1-of-1 slds-medium-size--1-of-6 slds-large-size--2-of-12">
+                <div id="fc-admin-settings-menu" data-fc-admin-settings-menu=""></div>
+            </div>
+            <!-- CONTENT -->        
+            <div class="fc-set-height-col slds-col slds-size--1-of-1 slds-medium-size--4-of-6 slds-large-size--9-of-12">
+                <div id="fc-settings-display-block" data-ui-view=""></div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- / REQUIRED SLDS WRAPPER -->    
+    
+</aura:component>

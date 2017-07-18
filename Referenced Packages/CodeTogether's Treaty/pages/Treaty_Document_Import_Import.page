@@ -1,0 +1,4 @@
+<apex:page controller="codetogether.Treaty_Import_Document_Controller" action="{!importaction}">
+ 	Importing Document.  Please wait...
+    <apex:outputText value="{!output}" escape="false"></apex:outputText>
+</apex:page>

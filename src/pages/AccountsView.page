@@ -1,0 +1,5 @@
+<apex:page standardController="Account" recordSetVar="accounts" extensions="AccountPagination" action="{!getSelectedAccounts}" >
+   
+     
+   
+</apex:page>

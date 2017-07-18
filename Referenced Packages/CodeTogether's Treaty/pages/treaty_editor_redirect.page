@@ -1,0 +1,10 @@
+<apex:page standardController="codetogether__Treaty_Document__c">
+  
+  <h2>If you are not redirected to the editor automatically, click here: <a href="/apex/apex/Treaty_Editor?doc={!codetogether__Treaty_Document__c.id}">Go To Editor</a> </h2>
+  
+  <script type="text/javascript">
+    setTimeout(function(){
+        location.href="/apex/apex/Treaty_Editor?doc={!codetogether__Treaty_Document__c.id}";
+    }, 1000)
+  </script>
+</apex:page>

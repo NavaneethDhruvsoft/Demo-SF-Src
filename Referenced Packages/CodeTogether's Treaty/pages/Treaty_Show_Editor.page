@@ -1,0 +1,1125 @@
+<apex:page title="{!codetogether__Treaty_Document__c.name} - Treaty Show Editor" tabstyle="codetogether__Treaty_Document__c" sidebar="false" showChat="true" showHeader="false" standardController="codetogether__Treaty_Document__c" extensions="codetogether.Treaty_Editor_Controller_Extension" action="{!verifyPermissions}" >
+    <script>
+    if (typeof Object.create != 'function') {
+        Object.create = (function() {
+            var Object = function() {};
+            return function (prototype) {
+                if (arguments.length > 1) {
+                    throw Error('Second argument not supported');
+                }
+                if (typeof prototype != 'object') {
+                    throw TypeError('Argument must be an object');
+                }
+                Object.prototype = prototype;
+                var result = new Object();
+                Object.prototype = null;
+                return result;
+            };
+        })();
+    }
+    if(console == undefined)
+    {
+        console = {};
+        console.log = function(){};
+        console.debug = function(){};
+    }
+    </script>
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.TreatyResources, '/jquery/jqueryui.css')}" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.TreatyResources, '/colorpicker/css/evol.colorpicker.css')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TreatyResources, '/jquery/jquery.min.js')}"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/jquery/jquery-ui.min.js')}" type="text/javascript"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.TreatyResources, '/tinymce_4.1.3/tinymce/js/tinymce/tinymce.min.js')}"></script>
+    <script type="text/javascript" src="{!URLFOR($Resource.TreatyResources, '/colorpicker/js/evol.colorpicker.js')}"></script>
+    
+    <script type="text/javascript" src="{!URLFOR($Resource.TreatyResources, '/Flotr2/flotr2.js')}"></script>
+    
+    <script type="text/javascript" src="https://treatytime.com:4900/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="https://treatytime.com:4900/treaty/treaty.js"></script>
+    <script type="text/javascript" src="https://treatytime.com:4900/treaty/tinymceEditor4.js"></script>		
+    
+    <script type="text/javascript">
+    //change context of function
+    if(Function.prototype.cc == undefined){ Function.prototype.cc = function(that){ var self = this; try{ return function(){ return self.apply(that, arguments); }; }catch (e){ return false; }};}
+    guid = function(prefix){ var id = prefix; var date = new Date(); id += (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1); id += (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1); id += (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1); return id; }
+    </script>
+    
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideTemplates.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideException.js')}" type="text/javascript"></script>
+     <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideDeck.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlide.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlide.Master.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideThumbnail.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.Textbox.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.Title.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.Shape.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.Image.js')}" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.TreatyResources, '/show/TreatySlideElement.Chart.js')}" type="text/javascript"></script>    
+    <!-- -->
+     
+    <!--
+       <script src="https://bserrette.treatytime.com/js/show2/TreatySlideTemplates.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideException.js" type="text/javascript"></script>
+     <script src="https://bserrette.treatytime.com/js/show2/TreatySlideDeck.js" type="text/javascript"></script>
+
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlide.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlide.Master.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideThumbnail.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.Textbox.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.Title.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.Shape.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.Image.js" type="text/javascript"></script>
+    <script src="https://bserrette.treatytime.com/js/show2/TreatySlideElement.Chart.js" type="text/javascript"></script>
+<!-- -->
+    
+    <script type="text/javascript">
+var DEBUG = true;
+var TREATYSHOW = function(){
+    var docID = "{!doc.id}";//getParameterByName("doc");
+    var apiKey = "{!apiKey}";
+    
+    var cur = "";    
+    var fullscreen = false;
+    
+    var deck = null;
+    var Session = null;
+    
+    var addUser = function(user)
+    {
+        var ul = document.getElementById("userlist");
+        var li = document.createElement("li");
+        if(user.personID == deck.Treaty.me.personID)
+            li.innerHTML = "Me";
+        else
+            li.innerHTML = user.info.firstName + " " + user.info.lastName;
+        li.id = "user_"+user.personID;
+        ul.appendChild(li);
+        adjustInterface();
+    } 
+    var updateNotification = function(message)
+    {
+        var d = new Date();
+        var hour = d.getHours();
+        var am = "am";
+        if(hour == 12)
+        {
+            am = "pm";
+        }
+        if(hour == 0)
+        {
+            hour = 12;
+        }
+        if(hour > 12)
+        {
+            hour -= 12;
+            am = "pm"
+        }
+        var minutes = d.getMinutes();
+        if(minutes < 10)
+            minutes = "0"+minutes;
+        
+        var seconds= d.getSeconds();
+        if(seconds< 10)
+            seconds= "0"+seconds;
+        
+        $("#notificationArea").html(message + hour +":"+minutes+":"+seconds+""+am);
+    }
+    
+    var adjustInterface = function(){
+        var h = $("#header_div").height();
+        $("#interface_div").css("top", h + "px");
+    }
+    var saveShow = function(){
+        if(deck.Treaty.isLeader())
+        {
+            if(cur != deck.toString())
+            {
+                cur = deck.toString();
+                //every 30 saves, the leader will create a new snapshot
+                historyCounter ++;
+                if(historyCounter >= 30)
+                {
+                    //saveSnapshot();
+                    historyCounter = 0;
+                }
+                
+                //save the content of the editor
+                $.ajax({
+                    url : "/apex/Treaty_Save_Frost",
+                    type : "POST",
+                    data : {
+                        apiKey : apiKey,
+                        sessionID : docID,
+                        content : cur
+                    },
+                    success : function(data)
+                    {
+                        updateNotification("Saved at ");
+                    }.cc(this)
+                });
+            }
+        }
+    };
+    
+    var loadDeck = function(msg){
+        var deckjson = {metadata:{deckID: docID, height: 9, width: 16}, theme:{}, slides:[{id: guid("slide")}]};
+        msg = msg.trim();
+        if(msg && msg != "" )
+            deckjson = JSON.parse(msg);
+        
+        updateNotification("Restored at ");
+        Session = new Treaty.Session({
+            serverURL: "https://{!nodeServer}",
+            sessionID : docID,
+            apiKey : apiKey,
+            me : new Treaty.Person({
+                personID : "{!$User.Id}",
+                info : {
+                    firstName: "{!$User.FirstName}",
+                    lastName: "{!$User.LastName}",
+                    alias: "{!$User.Alias}",
+                    mail: "{!$User.Email}"
+                }
+            })
+        });
+        Session.bind("personJoined", function(e, person){
+            if(person.personID == Session.me.personID)
+            {
+                document.getElementById("userlist").innerHTML = "";
+                addUser(Session.me);
+                for(var i in Session.people)
+                {
+                    if(i == Session.me.personID)
+                        continue;
+                    
+                    var p = Session.people[i];
+                    addUser(p);
+                }
+            }
+            else
+            {
+                addUser(person);
+            }
+        });
+        //remove the person from the list if he leaves
+        Session.bind("personLeft", function(e, person){
+            var li = document.getElementById("user_" + person.personID);
+            if(li)
+                li.parentNode.removeChild(li);
+        });
+        //print a list of current users when the session is connected
+        Session.bind("connected", function(e, a){
+            //console.debug(Session.people);
+        });
+        
+        
+        deck = new TreatySlideDeck(
+            {
+                apiKey : apiKey,
+                deckID : docID,
+                starterDeck : deckjson, 
+                treatyServer : "https://{!nodeServer}",
+                me : new Treaty.Person({
+                    personID : "{!$User.Id}",
+                    info : {
+                        firstName: "{!$User.FirstName}",
+                        lastName: "{!$User.LastName}",
+                        alias: "{!$User.Alias}",
+                        mail: "{!$User.Email}"
+                    }
+                }),
+                Treaty: Session
+            }
+        );
+        //alert("loaded");
+        adjustInterface();
+        
+        //deck.loadDeck(deckjson);
+        $.ajax({
+            url : "/apex/Treaty_Image_List",
+            type : "POST",
+            data : {
+                
+            },
+            dataType : "text",
+            success : function(msg) {
+                var s = msg.indexOf("{");
+                var e = msg.lastIndexOf("}");
+                msg = msg.slice(s+1, e);
+                var images = msg.split("},{");
+                
+                for(var i = 0; i < images.length; i++)
+                {
+                    var str = images[i];
+                    var title = str.match(/title: "(.*)", value/)[1];
+                    var value = str.match(/", value: "(.*)"/)[1];
+                    var o = document.createElement("option");
+                    o.innerHTML = title;
+                    o.value = value;
+                    $("#image_url_form [name=url]").append(o);
+                }
+                
+            }
+        });
+        
+        cur = deck.toString();
+        
+        deck.defaultActiveButtons.saveShow = function(){
+            saveShow();
+        };
+        deck.defaultActiveButtons.fullScreen = function(){
+            if($("#header_div").height() == 0)
+            {
+                $("#header_div").css("height", "auto").css("overflow", "");
+                $("#header_div *").css("margin-top", "");
+            }
+            else
+            {
+                headerHeight = $("#header_div").height();
+                $("#header_div").css("height", "0px").css("overflow", "hidden");
+                $("#header_div *").css("margin-top", "-1000px");
+                
+            }
+            adjustInterface();
+            deck.resize();
+        };
+        
+        historyCounter = 0;
+        
+        var interval = setInterval(function(){
+            saveShow();
+        }.cc(this), 20000);
+        
+        
+        
+        $("#theme_colors_form button").click(function(){
+            return false;
+        });
+        $("#theme_colors_form button[name=saveTheme]").click(function(){
+            var d = $("#themeSave_form");
+            d.dialog(deck.dialogSettings);
+            d.dialog("open");
+        });
+        $("#theme_colors_form button[name=loadTheme]").click(function(){
+            populateThemeList(function(){
+	            var d = $("#themeLoad_form");
+    	        d.dialog(deck.dialogSettings);
+        	    d.dialog("open");
+                });
+        });
+        $("#themeSave_form [name=cancel]").click(function(){ $("#themeSave_form").dialog("close"); return false; });
+        $("#themeLoad_form [name=cancel]").click(function(){ $("#themeLoad_form").dialog("close"); return false; });
+        $("#themeSave_form select").on("change", function(e){
+            if($("#themeSave_form select").val() != "New")
+                $("#themeSave_form #themeNameInput").hide();
+            else
+                $("#themeSave_form #themeNameInput").show();
+        });
+        $("#themeSave_form [name=saveTheme]").click(function(e){
+            $($("#theme_colors_form").parent().find(".ui-button")[0]).click();
+            
+            e.preventDefault();
+            var themeString = "";
+            var theme = {colors:[], slides:[]};
+            for(var i in deck.theme.colors)
+            {
+                theme.colors[i] = deck.theme.colors[i];
+            }
+            for(var i in deck.masterSlides)
+            {
+                theme.slides.push(deck.masterSlides[i].toArray());
+            }
+            
+            themeString = JSON.stringify(theme);
+            //console.debug(themeString);
+            var themeID = $("#themeSave_form select").val();
+            var name = $("#themeSave_form option[value="+themeID+"]").html();
+            if(themeID == "New")
+                name = $("#themeSave_form [name=themeName]").val();
+            
+            
+            $.ajax({
+                url: "/apex/Treaty_Show_Theme",
+                type:"POST",
+                data : {
+                    a : "save",
+                    name : name,
+                    content : themeString,
+                    themeID : themeID
+                },
+                success: function(){
+                    try{
+                        $("#theme_colors_form").dialog("close");
+                    }
+                    catch(e)
+                    {
+                    }
+                    
+                }
+            });
+            $("#themeSave_form").dialog("close"); 
+            return false; 
+        });
+        
+        
+        $("#themeLoad_form [name=loadTheme]").click(function(e){
+            e.preventDefault();
+            var themeID = $("#themeLoad_form select").val();
+            
+            $("#theme_colors_form").dialog("close");
+            $.ajax({
+                url: "/apex/Treaty_Show_Theme",
+                type:"POST",
+                data : {
+                    a : "load",
+                    themeID : themeID
+                },
+                success: function(data){
+                    
+                    var theme = JSON.parse(data);
+                    
+                    deck.loadTheme(theme);
+                    deck.updateAllSlides();
+                    deck.updateAllMasterSlides();
+                    
+                    try{
+                        
+                    }
+                    catch(e)
+                    {
+                    }
+                    
+                }
+            });
+            $("#themeLoad_form").dialog("close"); 
+            return false; 
+        });
+        
+        //populate theme lists
+        function populateThemeList(callback){
+            $.ajax({
+                url: "/apex/Treaty_Show_Theme?a=list",
+                success : function(data) {
+                    var a = data.split("&&&");
+                    $(".themelist").text("");
+                    $("#themeSave_form .themelist").append("<option value='New'>New Theme</option>");
+                    for(var i = 1; i < a.length; i+=2)
+                    {
+                        $(".themelist").append("<option value='" + a[i+1] + "'>" + a[i] + "</option>");
+                    }
+                    if(callback)
+                        callback();
+                }
+            });
+        }
+        populateThemeList();
+        
+        $("#slideContainer").on("click", function(e){
+            if(e.target.id == "slideContainer")
+                deck.deselectElement();
+        });
+        
+        notesSettings = {};
+        $("#notesLabel button").click(function(e){
+            e.preventDefault();
+            
+            if($("#notesLabel button").html() == "Hide")
+            {
+                notesSettings.nb = $("#notesLabel").css("bottom");
+                notesSettings.nh = $("#notesContainer").css("height");
+                notesSettings.nd = $("#notesContainer .mce-tinymce").css("margin-top");
+                notesSettings.sb = $("#slideContainer").css("bottom");
+                
+                
+                $("#notesLabel").css("bottom", "0")
+                $("#notesContainer").css("height", "0");
+                $("#notesContainer .mce-tinymce").css("margin-top", "-30000px");
+                $("#slideContainer").css("bottom", "0");
+                
+                $("#notesLabel button").html("Show");
+                
+                deck.resize();
+            }
+            else
+            {
+                $("#notesLabel").css("bottom", notesSettings.nb)
+                $("#notesContainer").css("height", notesSettings.nh);
+                $("#notesContainer .mce-tinymce").css("margin-top", notesSettings.nd);
+                $("#slideContainer").css("bottom", notesSettings.sb);
+                $("#notesLabel button").html("Hide");
+                deck.resize();
+            }
+            
+            return false;
+        });
+        
+        
+        
+        $(window).on("resize", function(e){ 
+            if(e.target != window) 
+                return false;
+            var h = $("#header_div").height();
+            $("#interface_div").css("top", h + "px");
+            //deck.resize();
+            deck.resize();
+        });
+        
+    };
+    
+    
+    var obj = {
+        getDeck : function(){
+            return deck;
+        },
+        loadDeck: loadDeck,
+        adjustInterface: adjustInterface,
+        addUser : addUser,
+        updateNotification : updateNotification,
+        saveShow: saveShow,
+        resizeDeck: function(){
+            deck.resize();
+        },
+        getDocID : function(){
+            return docID;
+        }
+    };
+    return obj;
+    
+    
+}();
+
+
+
+    
+    
+    
+    
+    $(document).ready(function(){
+        
+        $("body").on("deck_loaded", function(){
+            $("#loadingArea").css("display", "none");
+        });
+        
+        $.ajax({
+            url : "/apex/Treaty_Get_Document",
+            type : "POST",
+            data : {
+                doc : TREATYSHOW.getDocID()
+            },
+            dataType : "text",
+            success : function(msg) {
+                //console.debug(msg);
+                TREATYSHOW.loadDeck(msg);
+            },
+            complete : function(x, s)
+            {
+                //console.debug(x, s);
+            }.cc(this)
+            
+        });
+        
+        var dialogs = document.getElementById("dialogs");
+        
+        
+        $(".evo-colorind-ff").css({"width":""});
+        $(".evo-colorind-ff").parent().css({"display":"inline-block", "width":""});
+    });
+</script>
+
+<!-- -->
+    <style id="baseStyles" type="text/css">
+        #userlist
+        {
+        list-style: none;
+        martin: 0;
+        padding: 0;
+        }
+        #userlist li
+        {
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        }
+        #userlist li:after
+        {
+        content: ",&nbsp;";
+        }
+        #userlist li:last-child:after
+        {
+        content:"";
+        }
+        #interface_div
+        {
+        	position: absolute;
+        	right: 0;
+        	bottom: 0;
+        	left: 0;
+        }
+        .evo-pop 
+        {
+        	top: 50%;
+        	position: fixed !important;
+        	left: 50%;
+        margin-left: -100px;
+        margin-top: -100px;
+        }
+			.elementHandle
+			{
+				display: block;
+				background: rgba(255, 127, 0, .7);
+				/*border: solid #FF7F00 3px;*/
+				position: absolute;
+				height: 20px;
+				width: 20px;
+				z-index: 1000;
+				cursor: move;
+				-webkit-border-radius: 20px;
+				-moz-border-radius: 20px;
+				border-radius: 20px;
+			}
+			label
+			{
+				/*position: absolute;*/
+				margin-top: 2px;
+				display: block;
+				font-size: 90%;
+				
+			}
+			input[type=colorpicker]
+			{
+				width: 2em;
+				display: none;
+			}
+			body
+			{
+				margin: 0;
+				padding: 0;
+			}
+			.no-close .ui-dialog-titlebar-close, .no-close .ui-dialog-titlebar  {
+				display: none;
+			}
+			#thumbnailContainer
+			{
+				/*border: solid black 2px;*/
+				padding: 20px;
+				width: 15%;
+				position: absolute;
+				left: 0;
+				top: 2em;
+				bottom: 0;
+				overflow: auto;
+				background: #f0f0f0;
+			}
+			
+			#slideContainer, #themeContainer
+			{
+				float: right;
+				position: absolute;
+				left: 15%;
+				margin-left: 40px;
+				margin-bottom: 1em;
+				right: 0;
+				top: 2em;
+				bottom: 100px;
+				padding: 20px;
+				/*border: solid blue 2px;*/
+				background: #f0f0f0;
+			}
+			#notesContainer
+			{
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				left: 15%;
+				margin-left: 40px;
+				height: 100px;
+				border: solid black 1px;
+        		border-top: 0;
+				
+			}
+			#notesContainer textarea
+			{
+				/*width: 90%;
+				height: 90%;*/
+			}
+			#notesContainer .mce-edit-area
+			{
+				border: 0;
+				margin: -1px;
+			}
+			#notesLabel
+			{
+				position: absolute;
+				margin-top: -1em;
+				margin-left: -1px;
+				padding-left: 1em;
+				background: #f0f0f0;
+				padding-bottom: 0;
+				border-bottom: solid black 1px;
+				/*width: 100%;*/
+				z-index: 100;
+				left: 0; right: -1px;
+			}
+			.slideShow #slideContainer
+			{
+				left: 0;
+				margin:0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				padding: 0;
+				border: 0;
+				overflow: hidden;
+        		position: fixed;
+			}
+			.slideShow #slideContainer > article
+			{
+				margin-top: -1px;
+				border: 0;
+			}
+			.slideShow #notesContainer, .slideShow #notesLabel
+			{
+				display: none;
+			}
+			
+			.slideShow .lockOwner
+			{
+				visibility: hidden;
+			}
+			
+			#themeContainer
+			{
+				display: none;
+			}
+			
+			.slide, .thumbnail
+			{
+				border: solid black 1px;
+				/*font-family: monospace;*/
+			
+				-webkit-box-shadow: 2px 2px 5px 0px rgba(50, 50, 50, 0.75);
+				-moz-box-shadow:    2px 2px 5px 0px rgba(50, 50, 50, 0.75);
+				box-shadow:         2px 2px 5px 0px rgba(50, 50, 50, 0.75);
+			}
+			.masterSlideThumbnail:before
+			{
+				display: block;
+				content: 'M';
+				position: absolute; 
+				z-index: 1000;
+				bottom: 0;
+				left: 0;
+				border: solid black 1px;
+				background: #ffffff;
+				width: 1em;
+				height: 1em;
+				text-align: center;
+				cursor: default;
+			}
+			.unit *, .background *
+			{
+				padding: 0;
+				margin: 0;
+				border: 0;
+				font-size: 12%;
+				font-weight: 0;
+				text-decoration: none;
+			}
+			
+			.TreatySlideElementViewState, .TreatySlideElementSelectedState
+			{
+				font-size: 100%;
+				height: 100%;
+				width: 100%;
+			}
+			
+			.TreatySlideElementViewState *, .TreatySlideElementSelectedState *
+			{
+				font-size: 100%;
+			}
+			.TreatySlideElement_textbox .TreatySlideElementSelectedState *
+			{
+				cursor: text;
+			}
+			.TreatySlideElementViewState, body > menu, body > menu div
+			{
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+			
+			.slide .TreatySlideSelectedElement
+			{
+				border: dashed gray 2px;
+			}
+			
+			
+			#shapes
+			{
+				display: none;
+			}
+			
+			#element_menu
+			{
+				padding: 0;
+				margin: 0;
+				height: 2em;
+				position: relative;
+				width: 100%;
+				display: block;
+				text-align: center;
+			}
+			#element_menu div
+			{
+				display: inline-block;
+				/*padding: 0 .5em;*/
+				margin: 0;
+				height: 100%;
+				/*border: solid black 1px;*/
+				cursor: not-allowed;
+				color: lightgray;
+				opacity: .5;
+			}
+			#element_menu div.active
+			{
+				color: black;
+				cursor: pointer;
+				opacity: 1;
+			}
+			
+			
+			#element_menu img
+			{
+				max-width: 100%;
+				max-height: 100%;
+				vertical-align: middle;
+			}
+			
+			#dialogs
+			{
+				display: none;
+			}
+			.ui-dialog-content 
+			{
+				white-space: nowrap;
+			}
+			
+			.TreatySlideElement_textbox  ul
+			{
+				
+				margin-left: 1em;
+			}
+			.TreatySlideElement_textbox  ol
+			{
+				margin-left: 2em;
+			}
+			
+			
+			.pbBody
+        {
+        position: relative;
+        }
+        
+        #loadingArea
+        {
+        position: absolute;
+        background: rgba(255,255,255,.75);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        font-weight: bold;
+        z-index: 1000;
+        height: 100%;
+        line-height: 100%;
+        vertical-align: middle;
+        }
+        
+        
+        #loadingArea div
+        {
+        	margin-top: 5em;
+        }
+        
+        #deckRatio input
+        {
+        width: 3em;
+        }
+        
+        .colors > div > div
+        {
+        	display: inline-block;
+        	height: 1em;
+        	width: auto;
+        
+        }
+        .colors > div
+        {
+        	line-height: 2em;
+        }
+        
+        .mce-menu-item:not(.mce-menu-item-preview):not(:hover) .mce-text
+        {
+        	color: black;
+        }
+    </style>
+		
+    
+  <div id="header_div">
+    <p style="position: absolute; right: 0; margin: 1em;">
+        <a href="/{!Treaty_Document__c.id}">&lt;&lt;Back to Treaty Document Details</a>
+    </p>
+      <apex:sectionHeader title="Treaty Document" subtitle="{!codetogether__Treaty_Document__c.name}" />
+    
+    <apex:pageBlock title="Current Users" >
+        <div id="currentusers">
+            <ul id="userlist">
+            </ul>
+        </div>
+    </apex:pageBlock>
+</div>
+    <div id="interface_div" >
+        
+      <span id="notificationArea" style="float: right"></span>
+        
+		
+		<menu id="element_menu">
+            <div title="Save Slide Show" id="button_saveShow"><img src="{!URLFOR($Resource.TreatyResources, '/icons/save.png')}" /></div>
+            <div>|</div>
+			<div title="Download PDF" id="button_handouts"><img src="{!URLFOR($Resource.TreatyResources, '/icons/pdf.png')}" /></div>
+			<div> | </div>
+			<div title="Full Screen" id="button_fullScreen"><img src="{!URLFOR($Resource.TreatyResources, '/icons/fullscreen.png')}" /></div>
+			<div title="Begin Slide Show" id="button_startShow"><img src="{!URLFOR($Resource.TreatyResources, '/icons/slideshow.png')}" /></div>
+			<div> | </div>
+            <div title="Duplicate Current Slide" id="button_duplicateSlide"><img src="{!URLFOR($Resource.TreatyResources, '/icons/duplicateSlide.png')}" /></div>
+            <div title="Add New Slide" id="button_newSlide"><img src="{!URLFOR($Resource.TreatyResources, '/icons/newSlide.png')}" /></div>
+            <div title="Delete Current Slide" id="button_deleteSlide"><img src="{!URLFOR($Resource.TreatyResources, '/icons/deleteSlide.png')}" /></div>
+			<div >|</div>
+            <div title="Bring Element to Front" id="button_toFront"><img src="{!URLFOR($Resource.TreatyResources, '/icons/toFront.png')}" /></div>
+            <div title="Bring Element Forward" id="button_forward"><img src="{!URLFOR($Resource.TreatyResources, '/icons/forward.png')}" /></div>
+            <div title="Send Element Backward" id="button_backward"><img src="{!URLFOR($Resource.TreatyResources, '/icons/backwards.png')}" /></div>
+            <div title="Send Element to Back" id="button_toBack"><img src="{!URLFOR($Resource.TreatyResources, '/icons/toBack.png')}" /></div>
+			<div >|</div>
+			<div title="Remove Element" id="button_delete"><img src="{!URLFOR($Resource.TreatyResources, '/icons/removeElement.png')}" /></div>
+			<div >|</div>
+            <div title="Background Color" id="button_bg_color"><img src="{!URLFOR($Resource.TreatyResources, '/icons/bg_color.png')}" /></div>
+            <div title="Fill Color" id="button_fill_color"><img src="{!URLFOR($Resource.TreatyResources, '/icons/fill_color.png')}" /></div>
+            <div title="Stroke Color" id="button_stroke_color"><img src="{!URLFOR($Resource.TreatyResources, '/icons/stroke_color.png')}" /></div>
+            <div title="Stroke Weight" id="button_stroke_width"><img src="{!URLFOR($Resource.TreatyResources, '/icons/stroke_width.png')}" /></div>
+			<div >|</div>
+			<div title="Images" id="button_image"><img src="{!URLFOR($Resource.TreatyResources, '/icons/images.png')}" /></div>
+			<div title="Textbox" id="button_textbox"><img src="{!URLFOR($Resource.TreatyResources, '/icons/textbox.png')}" /></div>
+			<div title="Shapes" id="button_shape"><img src="{!URLFOR($Resource.TreatyResources, '/icons/shapes.png')}" /></div>
+			<div title="Charts and Graphs" id="button_chart"><img src="{!URLFOR($Resource.TreatyResources, '/icons/charts.png')}" /></div>
+			<div title="Line" id="button_line"><img src="{!URLFOR($Resource.TreatyResources, '/icons/line.png')}" /></div>
+			<div >|</div>
+			<div title="Deck Properties" id="button_theme"><img src="{!URLFOR($Resource.TreatyResources, '/icons/deckProperties.png')}" /></div>
+			<div title="Slide Properties" id="button_slide_properties"><img src="{!URLFOR($Resource.TreatyResources, '/icons/slideProperties.png')}" /></div>
+		</menu>
+		<div id="dialogs">
+            <form id="themeLoad_form">
+                
+                <select class="themelist">
+                </select>
+                <br />
+                <button name="loadTheme">
+                    Load Theme
+                </button>
+                <button name="cancel">
+                    Cancel
+                </button>
+            </form>
+            <form id="themeSave_form">
+                <select class="themelist">
+                    <option value="New">New Theme</option>
+                </select>
+                <div id="themeNameInput">
+                    <label>Theme Name:</label>
+                	<input type="text" name="themeName" value="New Theme"/>
+                </div>
+                <br />
+                <button name="saveTheme">
+                    Save Theme
+                </button>
+                <button name="cancel">
+                    Cancel
+                </button>
+            </form>
+			<form id="bg_color_form">
+				Background Color: <input type="colorpicker" /><br />
+				No Fill: <input type="checkbox" />
+			</form>
+			
+			<form id="image_url_form">
+				Image Url: <select name="url" >
+                
+                </select><br />
+				Width: <input name="width" type="number" /><br />
+				Height: <input name="height" type="number" /><br />
+			</form>
+			<form id="textbox_form">
+				Width: <input type="number" /><br />
+				Height: <input type="number" /><br />
+			</form>
+			<form id="shape_form">
+				<select></select><br />
+				Width: <input type="number" /><br />
+				Height: <input type="number" /><br />
+			</form>
+			
+			<form id="new_slide_form">
+				Slide Layout: <select></select><br />
+				Master Slide: <select></select>
+			</form>
+			<form id="fill_color_form">
+				Fill Color: <input type="colorpicker" /><br />
+				No Fill: <input type="checkbox" />
+			</form>
+			<form id="lineproperties_form">
+				Left Arrow <input type="checkbox" /><br />
+				Right Arrow: <input type="checkbox" />
+			</form>
+			
+			<form id="slide_properties_form">
+				<label>Slide Title: </label><input type="text" />
+				<br /><label>Background Color: </label><input type="colorpicker" />
+				<br /><label>No Color: </label><input type="checkbox" />
+				<br /><span><label>Master: </label><select></select></span>
+                <br /><span><label>Intro Transition</label>
+                	<select>
+                        <option value="">None</option>
+                        <option value="fadeIn">Fade In</option>
+                        <option value="slideFromRight">Slide From Right</option>
+                        <option value="slideFromLeft">Slide From Left</option>
+                        <option value="slideFromBottom">Fly From Bottom</option>
+                        <option value="slideFromTop">Drop From Top</option>
+                        
+                        <option value="wipeFromLeft">Wipe From Left</option>
+                        <option value="wipeFromRight">Wipe From Right</option>
+                        
+                        <option value="growFromLeft">Grow From Left</option>
+                        <option value="growFromRight">Grow From Right</option>
+                </select>
+                </span>
+                <br /><span><label>Outro Transition</label>
+                	<select>
+                        <option value="">None</option>
+                        <option value="fadeOut">Fade Out</option>
+                        <option value="slideToRight">Slide To Right</option>
+                        <option value="slideToLeft">Slide To Left</option>
+                        <option value="slideToBottom">Drop To Bottom</option>
+                        <option value="slideToTop">Fly To Top</option>
+                        
+                        <option value="shrinkToLeft">Shrink To Left</option>
+                        <option value="shrinkToRight">Shrink To Right</option>
+                </select>
+                
+                </span>
+				<br /><label>Auto Advance After: </label><input type="number" />seconds
+				
+				
+			</form>
+			<form id="stroke_color_form">
+				Stroke Color: <input type="colorpicker" /><br />
+			</form>
+			<form id="stroke_width_form">
+				Stroke Width<br />
+				<br />
+                None <input type="radio" name="strokeWidth" value="0" />
+				<br />
+                Thin <input type="radio" name="strokeWidth" value="5" />
+				<br />
+                Normal <input type="radio" name="strokeWidth" value="10" />
+				<br />
+                Thick <input type="radio" name="strokeWidth" value="20" />
+				<br />
+			</form>
+			<form id="theme_colors_form">
+                <button name="loadTheme">
+                    Load Theme
+                </button>
+                <button name="saveTheme">
+                    Save Theme
+                </button>
+                <br />
+				<div style="float: left;" class="colors">
+                    Colors: <br />
+                    <div>Primary: <input type="colorpicker" /></div>
+                    <div>Secondary: <input type="colorpicker" /></div>
+                    <div>Accent 1: <input type="colorpicker" /></div>
+                    <div>Accent 2: <input type="colorpicker" /></div>
+                    <div>Accent 3: <input type="colorpicker" /></div>
+                </div>
+                <div style="float: right;">
+                    
+                <br /><span><label>Size Ratio:</label></span>
+                    <select>
+                        <option>16:9</option>
+                        <option>4:3</option>
+                        <option>Custom</option>
+                    </select>
+                <br /><span id="deckRatio"><input type="number" /> : <input type="number" /></span>
+                    
+                </div>
+			</form>
+			<form id="chart_form">
+				Type: <select>
+				<option value="chart">Line</option>
+				<option value="barChart">Bar</option>
+				<option value="pieChart">Pie</option>
+				</select>
+				<br />
+				Width: <input type="number" /><br />
+				Height: <input type="number" /><br />
+				<br />
+				<br />
+				<div id="chart_data">
+				</div>
+			</form>
+            <form id="uploadHandoutForm" target="_blank" method="POST" action="apex/Treaty_Show_PDF?action=buildhtml">
+				<input name="apiKey" />
+				<input name="type" value="pdf" />
+				<input name="returnFull" value="true" />
+				<input name="docID" value="" />
+				<input name="id" value="" />
+				<textarea name="html"></textarea>
+				
+			</form>
+		</div>
+		<div id="loadingArea">
+            <div>
+                Loading...
+            </div>
+        </div>
+		<style id="themeContainer" type="text/css"></style>
+		
+		<div id="thumbnailContainer">
+		</div>
+		
+		<div id="themeContainer">
+		</div>
+		
+		<div id="slideContainer" >
+		</div>
+		<div id="notesContainer">
+			<span id="notesLabel">Notes:
+                <button>Hide</button></span>
+		</div>
+		
+		<div id="shapes">
+			
+		</div>
+		
+		<div id="handout">
+			
+		</div>
+        
+    </div>
+    
+</apex:page>

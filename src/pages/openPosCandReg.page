@@ -1,0 +1,48 @@
+<apex:page standardController="Candidate__c" extensions="OpenPosList" sidebar="false" recordSetVar="{!cand}" > 
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<apex:form >
+    <apex:pageBlock >
+        <apex:pageBlockSection title="Candidate Registration">
+            
+                <apex:inputField value="{!cand.First_Name__c}"/><br/>
+                <apex:inputField value="{!cand.Last_Name__c}"/><br/>
+                <apex:inputField value="{!cand.Email__c}"/><br/>
+                <apex:inputField value="{!cand.Mobile__c}"/><br/>
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Resume/CV Upload" for="file"/>
+                  <apex:inputFile value="{!attachment.body}" filename="{!attachment.name}" id="file"/>
+                </apex:pageBlockSectionItem><br/>
+                
+                <apex:pageBlockSectionItem rendered="{! NOT(verified)}">
+                <!-- reCAPTCHA verification 
+                     Source: https://developers.google.com/recaptcha/docs/display -->
+                <script type="text/javascript"
+                    src="https://www.google.com/recaptcha/api/challenge?k={!publicKey}">
+                </script>
+                <noscript>
+                    <iframe src="https://www.google.com/recaptcha/api/noscript?k={!publicKey}"
+                    height="300" width="500" frameborder="0"></iframe><br/>
+                    <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+                    <input type="hidden" name="recaptcha_response_field"
+                        value="manual_challenge"/>
+                </noscript>
+                <!-- end reCAPTCHA verification -->
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:commandButton action="{!verify}" 
+                        value="Check If I'm Human" rendered="{! NOT(verified)}"/>
+            </apex:pageBlockSectionItem>
+            <div class="g-recaptcha" data-sitekey="6LfYOAsTAAAAAN3i7tKNMqeQjtavwrVthM9iQQSm"></div>
+            
+            <!-- Otherwise, they are verified, show a confirmation message -->
+            <apex:pageBlockSectionItem rendered="{!verified}">
+                <p>reCAPTCHA verification suggests that you're not a 'bot.</p>
+            </apex:pageBlockSectionItem>       
+                
+                <apex:commandButton action="{!candsave}" value="Save And Create Application"/>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:form>
+
+</apex:page>

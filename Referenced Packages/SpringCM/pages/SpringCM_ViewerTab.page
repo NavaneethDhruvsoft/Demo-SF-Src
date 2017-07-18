@@ -1,0 +1,54 @@
+<apex:page sidebar="false" controller="SpringCMEos.RetrieveEnvironment" action="{!environmentInformation}">
+
+<apex:iframe id="viewerTarget" width="100%" height="100%" src="#"></apex:iframe>
+<script type="text/javascript"> 
+
+    var springUrlBase = "https://{!URLENCODE(environmentPrefix)}";
+    var springUrl = springUrlBase + "/atlas/Common/ViewerTabRedirect.aspx?sfsid={!$Api.Session_ID}&sfapiurl={!$Api.Partner_Server_URL_180}";
+    
+    try 
+    { 
+       var url = window.parent.location.toString(); 
+       
+       // fix any potential encoding from an email
+       var regExColon = new RegExp('%3A', 'g'); 
+       var regExSlash = new RegExp('%2F', 'g'); 
+       var regExEquals = new RegExp('%3D', 'g'); 
+       var regExQues = new RegExp('%3F', 'g'); 
+    
+       url = url.replace(regExColon, ':'); 
+       url = url.replace(regExSlash, '/'); 
+       url = url.replace(regExEquals, '='); 
+       url = url.replace(regExQues, '?');
+       
+       // Redirect is a relative url. ex: /atlas/OtherPartOfSpringSite/etc
+       var springRedirect = url.split('springview=')[1].match('/atlas.*');
+       
+       if(springRedirect != null && springRedirect.length > 0) 
+       {
+          springUrl = springUrlBase + springRedirect + "&sfsid=" + "{!$Api.Session_ID}" + "&sfapiurl=" + "{!$Api.Partner_Server_URL_180}"; 
+       }
+    } 
+    catch(throwaway) 
+    {    
+    }
+    document.getElementById('viewerTarget').src = springUrl;
+	
+	function resizeViewerTarget() {
+        // detect if we are in the old Classic UI or the new Lightning UI
+        try
+        {
+            // Classic UI
+            document.getElementById('viewerTarget').height=parent.document.documentElement.clientHeight-200+"px";
+        }
+        catch(throwaway)
+        {
+            // Lightning UI
+            document.getElementById('viewerTarget').height=document.documentElement.clientHeight-25+"px";
+        } 
+    }
+    window.onresize=resizeViewerTarget;
+    resizeViewerTarget();
+
+</script>
+</apex:page>

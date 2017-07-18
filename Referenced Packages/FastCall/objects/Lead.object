@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>CurrentGenerators__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Current Generator(s)</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>NumberofLocations__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Number of Locations</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Primary__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Primary</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>No</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Yes</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>ProductInterest__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Product Interest</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>GC1000 series</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>GC5000 series</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>GC3000 series</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>SICCode__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SIC Code</label>
+        <length>15</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <webLinks>
+        <fullName>Dial_with_FastCall</fullName>
+        <availability>online</availability>
+        <displayType>massActionButton</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Dial with FastCall</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+        <url>{!REQUIRESCRIPT(&apos;//code.jquery.com/jquery-1.10.2.js&apos;)} 
+{!REQUIRESCRIPT(&apos;//code.jquery.com/ui/1.11.4/jquery-ui.js&apos;)} 
+{!REQUIRESCRIPT(&apos;/soap/ajax/34.0/connection.js&apos;)}
+{!REQUIRESCRIPT(&quot;/soap/ajax/34.0/apex.js&quot;)}
+ function buildNamespace(e){var a=&quot;&quot;;return FastCall_List.isPackageContext&amp;&amp;FastCall_List.packageNamespace&amp;&amp;FastCall_List.packageNamespace.length&gt;0&amp;&amp;(a=FastCall_List.packageNamespace+(e?&quot;.&quot;:&quot;__&quot;)),a}function getSettingsAndResolveNamespace(){var e=null;try{FastCall_List.packageNamespace=&quot;FastCall&quot;,FastCall_List.isPackageContext=!0,e=sforce.apex.execute(buildNamespace(!0)+&quot;FastCallSoftPhoneAPI&quot;,&quot;getDialFromListSettings&quot;,{})}catch(a){a.faultstring.indexOf(&quot;No service available for class&quot;)&gt;-1?(FastCall_List.packageNamespace=&quot;&quot;,FastCall_List.isPackageContext=!1,e=sforce.apex.execute(buildNamespace(!0)+&quot;FastCallSoftPhoneAPI&quot;,&quot;getDialFromListSettings&quot;,{})):alert(a)}return e}function checkListDialEnabled(){var e=&quot;&quot;;if(void 0===FastCall_List.dialSettings){var a=getSettingsAndResolveNamespace();FastCall_List.dialSettings=JSON.parse(a)}return&quot;true&quot;!==FastCall_List.dialSettings.dialFromListCapability?e=&apos;&lt;p style=&quot;padding:10px;&quot;&gt;Dial by list is an advanced feature in FastCall that enables users to dial down a list one record after another. The user has the option to stay in a call as FastCall dials each record in succession. Or FastCall can initiate a call to the user for each outbound call to the Salesforce record. Records are dialed one at a time. When the user ends the current call, the next record is dialed. Users select records in Salesforce using a standard list view. List views can be filtered or you can use a Salesforce campaign. A custom button must be added to the page as explained &lt;a href=&quot;http://fastcall.com/products/dial-by-list/&quot; target=&quot;_blank&quot;&gt;here.&lt;/a&gt;&lt;/p&gt;&apos;:&quot;true&quot;!==FastCall_List.dialSettings.dialFromListEnabled&amp;&amp;(e=&apos;&lt;p style=&quot;padding:10px;&quot;&gt;Dial by list is disabled by the Admin.&lt;/p&gt;&apos;),e}function fcDialList(){var e=[],a=&quot;&quot;;&quot;Lead&quot;===FastCall_List.sObjectApiName&amp;&amp;(e.push(&quot;Company&quot;),a=&quot;,&quot;+e.join(&quot;,&quot;));var l=sforce.connection.query(&quot;SELECT Id,Name,&quot;+phoneFieldsToQuery()+a+&quot; FROM &quot;+FastCall_List.sObjectApiName+&quot; WHERE Id IN &quot;+FastCall_List.recordIdsForQuery),t=l.getArray(&quot;records&quot;),i=[],s={};$j.each(t,function(e,a){var l=getPhoneNnumberToDial(a);null!==l&amp;&amp;(a.dialPhoneNumber=l,s[a.Id.substring(0,15)]=a)}),$j.each(FastCall_List.recordIds,function(e,a){s[a]&amp;&amp;i.push(s[a])}),console.log(&quot;Records to dial btn:&quot;+JSON.stringify(t)),sendCTIMessage(&quot;/CLICK_TO_DIAL?DIAL_LIST=true&amp;DN=&quot;+encodeURIComponent(JSON.stringify(i))+&quot;&amp;ENTITY_NAME=FastCallDialList&amp;OBJECT_NAME=&quot;+($j(&quot;#fc-user-stay-conf&quot;).prop(&quot;checked&quot;)?&quot;confmode&quot;:&quot;single_call&quot;))}function phoneFieldsToQuery(){var e=[];return $j(&quot;#fc-try-other-fields&quot;).prop(&quot;checked&quot;)?$j.each(phoneFields,function(a,l){e.push(l.name)}):e.push($j(&quot;#fc-select-phone-field&quot;).val()),e.join(&quot;,&quot;)}function getPhoneNnumberToDial(e){var a=null;if(null===e[$j(&quot;#fc-select-phone-field&quot;).val()]&amp;&amp;$j(&quot;#fc-try-other-fields&quot;).prop(&quot;checked&quot;))for(var l=0;null===a&amp;&amp;l&lt;phoneFields.length;)null!==e[phoneFields[l].name]&amp;&amp;(a=e[phoneFields[l].name]),l++;else null!==e[$j(&quot;#fc-select-phone-field&quot;).val()]&amp;&amp;(a=e[$j(&quot;#fc-select-phone-field&quot;).val()]);return a}var $j=jQuery.noConflict();FastCall_List={},FastCall_List.packageTaintClass=&quot;CallController&quot;,FastCall_List.dial=function(e,a){if(FastCall_List.sObjectApiName=e,0===a.length)alert(&quot;You must select any record before start dialing.&quot;);else{var l=checkListDialEnabled();if(0===l.length){FastCall_List.recordIds=a,FastCall_List.recordIdsForQuery=&quot;(&apos;&quot;,FastCall_List.recordIdsForQuery+=a.join(&quot;&apos;,&apos;&quot;)+&quot;&apos;)&quot;;var t=[];sforce.connection.describeSObject(e).fields.forEach(function(e,a){&quot;phone&quot;===e.type&amp;&amp;t.push({name:e.name,label:e.label})}),l+=&apos;&lt;div class=&quot;modal-fieldset&quot;&gt;&lt;label class=&quot;label-small&quot;&gt;Phone field to dial&lt;/label&gt;&lt;select id=&quot;fc-select-phone-field&quot;&gt;&apos;,$j.each(t,function(e,a){l+=&apos;&lt;option value=&quot;&apos;+a.name+&apos;&quot;&gt;&apos;+a.label+&quot;&lt;/option&gt;&quot;}),l+=&quot;&lt;/select&gt;&lt;/div&gt;&lt;br/&gt;&quot;,l+=&apos;&lt;div class=&quot;modal-fieldset&quot;&gt;&lt;label class=&quot;label-big&quot;&gt;Dial other Phone fields if selected field is empty&lt;/label&gt;&lt;input id=&quot;fc-try-other-fields&quot; type=&quot;checkbox&quot;/&gt;&lt;/div&gt;&apos;,l+=&apos;&lt;div class=&quot;modal-fieldset&quot;&gt;&lt;label class=&quot;label-big&quot;&gt;Keep me on line between calls&lt;/label&gt;&lt;input id=&quot;fc-user-stay-conf&quot; type=&quot;checkbox&quot;/&gt;&lt;/div&gt;&apos;,l+=&apos;&lt;div id=&quot;fc-list-dial-modal-alert&quot; class=&quot;alert-box warning radius&quot;&gt;Please note that if you don\&apos;t stay online between calls, the FastCall softphone is preferred.&lt;br/&gt;Depending on the phone devices, there might be some glitches on the overall experience. See &lt;a href=&quot;#&quot;&gt;here&lt;/a&gt;&lt;/div&gt;&apos;}if(0===$j(&quot;#dialog&quot;).length){var i=&apos;&lt;div id=&quot;dialog&quot; class=&quot;fc-dial-dialog&quot; title=&quot;FastCall dial by list&quot;&gt;&lt;/div&gt;&apos;,s=&quot;.fc-dial-dialog .modal-fieldset {margin: 10px 0px 0px 0px;} .fc-dial-dialog .label-small {display: inline-block;width: 200px;} .fc-dial-dialog #fc-select-phone-field {width: 244px;} .fc-dial-dialog .label-big {display: inline-block; width: 432px;} .fc-dial-dialog {width: 454px !important;} .ui-dialog {width:480px !important; z-index:10000 !important;} .alert-box {margin-top:10px; border-style:solid; border-width: 1px;display: none;font-size: 0.8125rem;font-weight: normal;margin-bottom: 1.25rem;padding: 0.875rem 1.5rem 0.875rem 0.875rem;position: relative;transition: opacity 300ms ease-out;background-color:#2ba6cb;border-color: #258faf;color:#FFFFFF;} .alert-box.radius {border-radius: 3px; }.alert-box.warning {background-color:#f08a24;border-color:#de770f;color:#FFFFFF;}.alert-box.info {background-color: #a0d3e8;border-color: #74bfdd;color: #4f4f4f;}&quot;;$j(&quot;head&quot;).append(&apos;&lt;link rel=&quot;stylesheet&quot; href=&quot;https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/redmond/jquery-ui.min.css&quot; type=&quot;text/css&quot;/&gt;&apos;).append(&quot;&lt;style&gt;&quot;+s+&quot;&lt;/style&gt;&quot;),$j(&quot;body&quot;).append(i)}var o={};&quot;true&quot;===FastCall_List.dialSettings.dialFromListCapability&amp;&amp;&quot;true&quot;===FastCall_List.dialSettings.dialFromListEnabled?o.Start=function(){fcDialList(),$j(this).dialog(&quot;close&quot;)}:&quot;true&quot;!==FastCall_List.dialSettings.dialFromListCapability?o.Upgrade=function(){window.open(&quot;http://www.fastcall.com/products/click-to-call/pricing.html&quot;),$j(this).dialog(&quot;close&quot;)}:&quot;true&quot;!==FastCall_List.dialSettings.dialFromListEnabled&amp;&amp;(o.Accept=function(){$j(this).dialog(&quot;close&quot;)}),$j(&quot;#dialog&quot;).empty().append(l).dialog({autoOpen:!0,modal:!0,buttons:o}),$j(&quot;#fc-user-stay-conf&quot;).length&gt;0&amp;&amp;($j(&quot;#fc-user-stay-conf&quot;).prop(&quot;checked&quot;,!0),$j(&quot;#fc-user-stay-conf&quot;).click(function(){$j(this).prop(&quot;checked&quot;)?$j(&quot;#fc-list-dial-modal-alert&quot;).hide():$j(&quot;#fc-list-dial-modal-alert&quot;).show()}))}};
+/*Init_List_Dial*/
+FastCall_List.dial(&apos;Lead&apos;, {!GETRECORDIDS($ObjectType.Lead)});</url>
+    </webLinks>
+</CustomObject>

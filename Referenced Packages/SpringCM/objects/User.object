@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Portal_Only__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SpringCM Portal Only</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>SpringCM_EnabledEndDate__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <inlineHelpText>This is the date that the user becomes disabled in SpringCM.  Leave blank for never.  Put in today&apos;s date for immediately.</inlineHelpText>
+        <label>SpringCM Enabled End Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>SpringCM_EnabledStartDate__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <inlineHelpText>This is that date that the user becomes enabled in SpringCM. Leave blank if enabled immediately.</inlineHelpText>
+        <label>SpringCM Enabled Start Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>SpringCM_Persona__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Personas, or role-based user settings, displays different buttons and menu items depending upon the user&apos;s job function</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Type in the name of the Persona the user is to be assinged to.</inlineHelpText>
+        <label>SpringCM Persona</label>
+        <length>100</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SpringCM_Role__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <inlineHelpText>-Guest (View Only Access)
+-Limited Subscriber (Select access to features)
+-Full Subscriber (Complete access to features)
+-User Administrator (Complete access to features and some administrative power)
+-Super Administrator (Full administrative power)</inlineHelpText>
+        <label>SpringCM Role</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Full Subscriber</fullName>
+                    <default>true</default>
+                </value>
+                <value>
+                    <fullName>Super Administrator</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>User Administrator</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Limited Subscriber</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Guest</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>SpringCM_User__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <description>By clicking this the user will be added to SpringCM.  Also unclicking this will delete the user from SpringCM.</description>
+        <externalId>false</externalId>
+        <label>SpringCM User</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <listViews>
+        <fullName>SpringCM_Users</fullName>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>SpringCM_User__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>SpringCM Users</label>
+    </listViews>
+</CustomObject>

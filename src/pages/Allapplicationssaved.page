@@ -1,0 +1,3 @@
+<apex:page sidebar="false" showHeader="true">
+<center><h3>Congrtas your applications are successfully saved!!</h3></center>
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page controller="SpringCMEos.EOSController" action="{!setup}" showHeader="false" sidebar="false" >
+	<c:SpringCM_EOSGrid objectType="{!objectType}" objectId="{!objectId}" startmigration="{!startmigration}" />
+<!-- <apex:iframe id="springEosGrid" frameborder="0" width="100%" src="https://{!envPrefix}/atlas/EOS/GetEosInformation.aspx?sfoid={!sfObjectId}&sfsid={!$Api.Session_ID}&sfapiurl={!$Api.Partner_Server_URL_180}&sfon={!URLENCODE(sfToken)}&popup=true&sfot={!sfType}&eosPath={!URLENCODE(eosObjectType.Path_Format__c)}&startmigration={!startMigration}" ></apex:iframe> -->
+
+</apex:page>

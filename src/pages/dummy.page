@@ -1,0 +1,19 @@
+<apex:page controller="AccountFieldSetController" tabStyle="Account">
+  <apex:form >
+      <apex:pageblock >        
+          <apex:pageBlockSection title="Account list" collapsible="false">
+             <apex:pageBlockTable value="{!accList}" var="acc">
+                 <apex:repeat value="{!$ObjectType.Account.fieldsets.accountFieldSet}" var="fieldValue">
+                     <apex:column value="{!acc[fieldValue]}">
+                     </apex:column>
+                 </apex:repeat>
+             </apex:pageBlockTable>
+          </apex:pageBlockSection>
+           
+          <apex:pageBlockSection title="Account Dynamic query" collapsible="false">
+              <apex:outputText value="Query is: {!queryString}" />
+          </apex:pageBlockSection>
+           
+      </apex:pageblock>
+    </apex:form>
+</apex:page>

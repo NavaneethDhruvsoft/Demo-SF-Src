@@ -1,0 +1,9 @@
+<apex:page >
+<h1>There has been a problem!</h1>
+<p>
+Either you do not have access to this Treaty Document or it does not exist.
+</p>
+<p>
+If someone shared this link with you, make sure that they've got the original file in a sharable folder.
+</p>
+</apex:page>

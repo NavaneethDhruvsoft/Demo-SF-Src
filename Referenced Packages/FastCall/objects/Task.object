@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <webLinks>
+        <fullName>Assign_Task</fullName>
+        <availability>online</availability>
+        <description>Assign task to sobject based on phone number</description>
+        <displayType>button</displayType>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>page</linkType>
+        <masterLabel>Assign Call</masterLabel>
+        <openType>newWindow</openType>
+        <page>TaskAssign</page>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+    </webLinks>
+    <webLinks>
+        <fullName>Delete_Recording</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Delete Recording</masterLabel>
+        <openType>sidebar</openType>
+        <page>TaskCallRecordingDelete</page>
+        <protected>false</protected>
+    </webLinks>
+</CustomObject>
