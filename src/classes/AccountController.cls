@@ -12,9 +12,10 @@ public with sharing class AccountController
         
     }
 	
-	public void m1(){}
 
-
+	public void m2(){
+		system.debug('Hello! This is M2');
+	}
    
 
    
