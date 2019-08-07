@@ -9,5 +9,9 @@ public with sharing class AccountController
 		system.debug('Hello! This is M2');
 	}
 
+	public void m3(){
+		system.debug('Hello! This is M3');
+	}
+
    
 }
